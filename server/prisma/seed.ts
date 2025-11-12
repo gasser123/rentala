@@ -21,10 +21,7 @@ async function insertLocationData(locations: any[]) {
     const { id, country, city, state, address, postalCode, coordinates } =
       location;
     try {
-      await prisma.$executeRaw`
-        INSERT INTO "Location" ("id", "country", "city", "state", "address", "postalCode", "coordinates") 
-        VALUES (${id}, ${country}, ${city}, ${state}, ${address}, ${postalCode}, ST_GeomFromText(${coordinates}, 4326));
-      `;
+      await prisma.$executeRaw`INSERT INTO "Location" ("id", "country", "city", "state", "address", "postalCode", "coordinates") VALUES (${id}, ${country}, ${city}, ${state}, ${address}, ${postalCode}, ST_GeomFromText(${coordinates}, 4326));`;
       console.log(`Inserted location for ${city}`);
     } catch (error) {
       console.error(`Error inserting location for ${city}:`, error);
@@ -34,7 +31,6 @@ async function insertLocationData(locations: any[]) {
 
 async function resetSequence(modelName: string) {
   const quotedModelName = `"${toPascalCase(modelName)}"`;
-
   const maxIdResult = await (
     prisma[modelName as keyof PrismaClient] as any
   ).findMany({
@@ -46,10 +42,8 @@ async function resetSequence(modelName: string) {
   if (maxIdResult.length === 0) return;
 
   const nextId = maxIdResult[0].id + 1;
-  await prisma.$executeRaw(
-    Prisma.raw(`
-    SELECT setval(pg_get_serial_sequence('${quotedModelName}', 'id'), coalesce(max(id)+1, ${nextId}), false) FROM ${quotedModelName};
-  `)
+  await prisma.$executeRawUnsafe(
+    `SELECT setval(pg_get_serial_sequence('${quotedModelName}', 'id'), coalesce(max(id)+1, ${nextId}), false) FROM ${quotedModelName};`
   );
   console.log(`Reset sequence for ${modelName} to ${nextId}`);
 }

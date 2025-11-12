@@ -33,7 +33,7 @@ const NavBar = () => {
           </Link>
         </div>
         <p className="text-gray-200 hidden md:block">
-          Discover our perfect rental apartment
+          Discover our perfect rental property
         </p>
         <div className="flex items-center gap-5">
           <Link href="/signin" className="cursor-pointer">
