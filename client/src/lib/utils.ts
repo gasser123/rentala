@@ -1,6 +1,11 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { toast } from "sonner";
+import {
+  FetchBaseQueryError,
+  FetchBaseQueryMeta,
+  QueryReturnValue,
+} from "@reduxjs/toolkit/query";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -73,7 +78,9 @@ export const createNewUserInDatabase = async (
       email: string;
       phoneNumber: string;
     };
-  }) => Promise<{ error?: unknown }>
+  }) => Promise<
+    QueryReturnValue<unknown, FetchBaseQueryError, FetchBaseQueryMeta>
+  >
 ) => {
   const createEndpoint =
     userRole?.toLowerCase() === "manager" ? "/managers" : "/tenants";
