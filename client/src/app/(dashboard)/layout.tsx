@@ -1,12 +1,14 @@
 "use client";
+import AppSidebar from "@/components/AppSidebar";
 import NavBar from "@/components/NavBar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { NAVBAR_HEIGHT } from "@/lib/constants";
 import { useGetAuthUserQuery } from "@/state/api";
 import { Loader } from "@aws-amplify/ui-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { data: authUser, isLoading: authLoading } = useGetAuthUserQuery();
   const router = useRouter();
   const pathname = usePathname();
@@ -41,19 +43,20 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     return null;
   }
   return (
-    <div className="h-full w-full ">
-      <NavBar />
-
-      <main
-        className={`h-full flex w-full flex-col`}
-        style={{
-          paddingTop: `${NAVBAR_HEIGHT}px`,
-        }}
-      >
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen w-full bg-gray-100">
+        <NavBar />
+        <div style={{ paddingTop: `${NAVBAR_HEIGHT}px` }}>
+          <main className="flex">
+            <AppSidebar userType={authUser.userRole} />
+            <div className="flex grow transition-all duration-300">
+              {children}
+            </div>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
-export default Layout;
+export default DashboardLayout;
