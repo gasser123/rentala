@@ -36,4 +36,24 @@ export class TenantService {
       throw error;
     }
   }
+
+  async update(tenantData: Omit<Tenant, "id">) {
+    const { cognitoId, email, phoneNumber, name } = tenantData;
+    try {
+      const tenant = await this.prisma.tenant.update({
+        data: {
+          email,
+          phoneNumber,
+          name,
+        },
+        where: {
+          cognitoId,
+        },
+      });
+      return tenant;
+    } catch (error) {
+      console.error("Error updating tenant:", error);
+      throw error;
+    }
+  }
 }

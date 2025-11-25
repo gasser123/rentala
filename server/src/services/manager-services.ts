@@ -33,4 +33,24 @@ export class ManagerService {
       throw error;
     }
   }
+
+  async update(managerData: Omit<Manager, "id">) {
+    const { cognitoId, email, name, phoneNumber } = managerData;
+    try {
+      const manager = await this.prisma.manager.update({
+        data: {
+          email,
+          phoneNumber,
+          name,
+        },
+        where: {
+          cognitoId,
+        },
+      });
+      return manager;
+    } catch (error) {
+      console.error("Error updating manager:", error);
+      throw error;
+    }
+  }
 }

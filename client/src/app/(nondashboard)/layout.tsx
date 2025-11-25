@@ -15,17 +15,12 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
     if (authUser) {
       const { userRole } = authUser;
       if (
-        (userRole === "manager" && pathname.startsWith("/tenants")) ||
-        (userRole === "tenant" && pathname.startsWith("/managers"))
+        (userRole === "manager" && pathname.startsWith("/search")) ||
+        (userRole === "manager" && pathname === "/")
       ) {
-        router.push(
-          userRole === "manager"
-            ? "/managers/properties"
-            : "/tenants/favorites",
-          {
-            scroll: false,
-          }
-        );
+        router.push("/managers/properties", {
+          scroll: false,
+        });
       }
     }
   }, [authUser, router, pathname]);
@@ -37,7 +32,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-  if (!authUser || !authUser.userRole) {
+  if ((!authUser || !authUser.userRole) && pathname !== "/landing") {
     return null;
   }
   return (

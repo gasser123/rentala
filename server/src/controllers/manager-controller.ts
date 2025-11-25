@@ -37,3 +37,22 @@ export const createManager = async (
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const updateManager = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { cognitoId } = req.params;
+    const { email, phoneNumber, name } = req.body;
+    const manager = await managerService.update({
+      cognitoId,
+      email,
+      phoneNumber,
+      name,
+    });
+    res.status(200).json(manager);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};

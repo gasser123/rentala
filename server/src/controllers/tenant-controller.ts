@@ -34,3 +34,22 @@ export const createTenant = async (
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+export const updateTenant = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { cognitoId } = req.params;
+    const { email, phoneNumber, name } = req.body;
+    const tenant = await tenantService.update({
+      cognitoId,
+      email,
+      phoneNumber,
+      name,
+    });
+    res.status(200).json(tenant);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
