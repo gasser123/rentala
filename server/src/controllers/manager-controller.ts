@@ -1,7 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { Request, Response } from "express";
-import { ManagerService } from "../services/manager-services";
+import { ManagerService } from "../services/manager-service";
+import { PropertyService } from "../services/property-service";
+import { LocationService } from "../services/location-service";
 const prisma = new PrismaClient();
+const locationService = new LocationService(prisma);
+const propertyService = new PropertyService(prisma, locationService);
 const managerService = new ManagerService(prisma);
 export const getManager = async (
   req: Request,
@@ -52,6 +56,16 @@ export const updateManager = async (
       name,
     });
     res.status(200).json(manager);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getManagerProperties = async (req: Request, res: Response) => {
+  try {
+    const { cognitoId } = req.params;
+    const properties = await propertyService.findByManagerCognitoId(cognitoId);
+    res.json(properties);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }

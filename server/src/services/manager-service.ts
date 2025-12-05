@@ -19,6 +19,15 @@ export class ManagerService {
   async create(managerData: Omit<Manager, "id">) {
     const { cognitoId, email, name, phoneNumber } = managerData;
     try {
+      const existingManager = await this.prisma.manager.findUnique({
+        where: {
+          cognitoId,
+        },
+      });
+
+      if (existingManager) {
+        throw new Error("Manager with this Cognito ID already exists");
+      }
       const manager = await this.prisma.manager.create({
         data: {
           cognitoId,

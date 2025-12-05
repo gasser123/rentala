@@ -1,7 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { TenantService } from "../services/tenant-service";
 import { Request, Response } from "express";
+import { PropertyService } from "../services/property-service";
+import { LocationService } from "../services/location-service";
 const prisma = new PrismaClient();
+const propertyService = new PropertyService(
+  prisma,
+  new LocationService(prisma)
+);
 const tenantService = new TenantService(prisma);
 export const getTenant = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -49,6 +55,63 @@ export const updateTenant = async (
       name,
     });
     res.status(200).json(tenant);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const getCurrentResidences = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { cognitoId } = req.params;
+    const properties = await propertyService.findByTenantCognitoId(cognitoId);
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const addFavoriteProperty = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { cognitoId, propertyId } = req.params;
+    const propertyIdNumber = Number(propertyId);
+    const updatedTenant = await tenantService.addFavoriteProperty(
+      cognitoId,
+      propertyIdNumber
+    );
+    if (updatedTenant) {
+      res.json(updatedTenant);
+    } else {
+      res.status(409).json({ message: "Property already added as favorite" });
+    }
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const removeFavoriteProperty = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { cognitoId, propertyId } = req.params;
+    const propertyIdNumber = Number(propertyId);
+    const updatedTenant = await tenantService.removeFavoriteProperty(
+      cognitoId,
+      propertyIdNumber
+    );
+    if (updatedTenant) {
+      res.json(updatedTenant);
+    } else {
+      res
+        .status(409)
+        .json({ message: "Property is not included in favorites" });
+    }
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
