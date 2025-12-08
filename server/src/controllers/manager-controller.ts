@@ -1,9 +1,9 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import { Request, Response } from "express";
 import { ManagerService } from "../services/manager-service";
 import { PropertyService } from "../services/property-service";
 import { LocationService } from "../services/location-service";
-const prisma = new PrismaClient();
+
 const locationService = new LocationService(prisma);
 const propertyService = new PropertyService(prisma, locationService);
 const managerService = new ManagerService(prisma);

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "../prisma";
 import { Request, Response } from "express";
 import { PropertyService } from "../services/property-service";
 import { PropertiesQuery } from "../types/properties/properties-query";
@@ -7,7 +7,6 @@ import { randomUUID } from "node:crypto";
 import axios from "axios";
 import { LocationService } from "../services/location-service";
 
-const prisma = new PrismaClient();
 const locationService = new LocationService(prisma);
 const propertyService = new PropertyService(prisma, locationService);
 const amazonS3Service = new AmazonS3Service();

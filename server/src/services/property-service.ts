@@ -277,4 +277,44 @@ export class PropertyService {
       throw error;
     }
   }
+
+  async findPropertyForApplication(propertyId: number) {
+    try {
+      const property = await this.prisma.property.findUnique({
+        where: {
+          id: propertyId,
+        },
+        select: {
+          pricePerMonth: true,
+          securityDeposit: true,
+        },
+      });
+
+      return property;
+    } catch (error) {
+      console.error(error, "Error fetching property for application:");
+      throw error;
+    }
+  }
+
+  async connectPropertyToTenant(propertyId: number, tenantCognitoId: string) {
+    try {
+      const property = await this.prisma.property.update({
+        where: {
+          id: propertyId,
+        },
+        data: {
+          tenants: {
+            connect: {
+              cognitoId: tenantCognitoId,
+            },
+          },
+        },
+      });
+      return property;
+    } catch (error) {
+      console.error(error, "error connecting property to tenant");
+      throw error;
+    }
+  }
 }
