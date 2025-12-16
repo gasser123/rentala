@@ -2,10 +2,13 @@
 
 import FiltersBar from "@/components/search/FiltersBar";
 import FiltersFull from "@/components/search/FiltersFull";
+import Map from "@/components/search/Map";
 import { NAVBAR_HEIGHT } from "@/lib/constants";
-import { cn } from "@/lib/utils";
+import { cleanParams, cn } from "@/lib/utils";
+import { FiltersState, setFilters } from "@/state";
 import { useAppDispatch, useAppSelector } from "@/state/redux";
 import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
@@ -14,6 +17,25 @@ const SearchPage = () => {
     (state) => state.global.isFiltersFullOpen
   );
 
+  useEffect(() => {
+    const initialFilters = Array.from(searchParams.entries()).reduce(
+      (acc: Record<string, unknown>, [key, value]) => {
+        if (key === "priceRange" || key === "squareFeet") {
+          acc[key] = value.split(",").map((v) => (v === "" ? null : Number(v)));
+        } else if (key === "coordinates") {
+          acc[key] = value.split(",").map(Number);
+        } else {
+          acc[key] = value === "any" ? null : value;
+        }
+
+        return acc;
+      },
+      {}
+    );
+
+    const cleanedFilters = cleanParams(initialFilters);
+    dispatch(setFilters(cleanedFilters));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <div
       className="w-full mx-auto px-5 flex flex-col"
@@ -36,7 +58,7 @@ const SearchPage = () => {
         >
           <FiltersFull />
         </div>
-        {/* <Map /> */}
+        <Map />
         <div className="basis-4/12 overflow-y-auto">{/* <Listings /> */}</div>
       </div>
     </div>

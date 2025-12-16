@@ -6,6 +6,7 @@ import { Loader } from "@aws-amplify/ui-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+const allowedPaths = ["/landing"];
 const Layout = ({ children }: { children: React.ReactNode }) => {
   const { data: authUser, isLoading: authLoading } = useGetAuthUserQuery();
   const router = useRouter();
@@ -32,7 +33,8 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       </div>
     );
   }
-  if ((!authUser || !authUser.userRole) && pathname !== "/landing") {
+  if ((!authUser || !authUser.userRole) && !allowedPaths.includes(pathname)) {
+    router.push("/signin");
     return null;
   }
   return (
