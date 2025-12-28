@@ -14,7 +14,44 @@ export const tenantsApiSlice = api.injectEndpoints({
       }),
       invalidatesTags: ({ result }) => [{ type: "Tenant", id: result?.id }],
     }),
+    addFavoriteProperty: builder.mutation<
+      Tenant,
+      { cognitoId: string; propertyId: number }
+    >({
+      query: ({ cognitoId, propertyId }) => ({
+        url: `/tenants/${cognitoId}/favorites/${propertyId}`,
+        method: "POST",
+      }),
+      invalidatesTags: ({ result }) => [
+        { type: "Tenant", id: result?.id },
+        { type: "Property", id: "LIST" },
+      ],
+    }),
+    removeFavoriteProperty: builder.mutation<
+      Tenant,
+      { cognitoId: string; propertyId: number }
+    >({
+      query: ({ cognitoId, propertyId }) => ({
+        url: `/tenants/${cognitoId}/favorites/${propertyId}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ({ result }) => [
+        { type: "Tenant", id: result?.id },
+        { type: "Property", id: "LIST" },
+      ],
+    }),
+    getTenant: builder.query<Tenant, string>({
+      query: (cognitoId) => {
+        return { url: `/tenants/${cognitoId}` };
+      },
+      providesTags: (result) => [{ type: "Tenant", id: result?.id }],
+    }),
   }),
 });
 
-export const { useUpdateTenantSettingsMutation } = tenantsApiSlice;
+export const {
+  useUpdateTenantSettingsMutation,
+  useAddFavoritePropertyMutation,
+  useRemoveFavoritePropertyMutation,
+  useGetTenantQuery,
+} = tenantsApiSlice;

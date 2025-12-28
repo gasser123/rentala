@@ -38,7 +38,7 @@ const Map = () => {
       map.remove();
       clearTimeout(timeOutId);
     };
-  });
+  }, [isLoading, isError, properties, filters.coordinates]);
 
   if (isLoading) {
     return (
