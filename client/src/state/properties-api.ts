@@ -35,7 +35,14 @@ export const propertiesApiSlice = api.injectEndpoints({
             ]
           : [{ type: "Property", id: "LIST" }],
     }),
+    getProperty: builder.query<Property, number>({
+      query: (propertyId) => {
+        return { url: `/properties/${propertyId}` };
+      },
+      providesTags: (result, error, id) => [{ type: "Property", id }],
+    }),
   }),
 });
 
-export const { useGetPropertiesQuery } = propertiesApiSlice;
+export const { useGetPropertiesQuery, useGetPropertyQuery } =
+  propertiesApiSlice;
