@@ -1,4 +1,4 @@
-import { Tenant } from "@/types/prismaTypes";
+import { Property, Tenant } from "@/types/prismaTypes";
 import { api } from "./api";
 
 export const tenantsApiSlice = api.injectEndpoints({
@@ -46,6 +46,18 @@ export const tenantsApiSlice = api.injectEndpoints({
       },
       providesTags: (result) => [{ type: "Tenant", id: result?.id }],
     }),
+    getCurrentResidences: builder.query<Property[], string>({
+      query: (cognitoId) => {
+        return { url: `/tenants/${cognitoId}/current-residences` };
+      },
+      providesTags: (result) =>
+        result
+          ? [
+              ...result.map(({ id }) => ({ type: "Property" as const, id })),
+              { type: "Property", id: "LIST" },
+            ]
+          : [{ type: "Property", id: "LIST" }],
+    }),
   }),
 });
 
@@ -54,4 +66,5 @@ export const {
   useAddFavoritePropertyMutation,
   useRemoveFavoritePropertyMutation,
   useGetTenantQuery,
+  useGetCurrentResidencesQuery,
 } = tenantsApiSlice;
