@@ -21,7 +21,7 @@ export const api = createApi({
     },
   }),
   reducerPath: "api",
-  tagTypes: ["Manager", "Tenant", "Property"],
+  tagTypes: ["Manager", "Tenant", "Property", "Lease", "Payment"],
   endpoints: (build) => ({
     getAuthUser: build.query<User, void>({
       queryFn: async (_, _queryApi, _extraoptions, fetchWithBQ) => {
