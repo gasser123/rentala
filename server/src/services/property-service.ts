@@ -162,6 +162,26 @@ export class PropertyService {
     }
   }
 
+  async findPropertyWithLeases(propertyId: number) {
+    try {
+      const property = await this.prisma.property.findUnique({
+        where: { id: propertyId },
+        include: {
+          leases: {
+            include: {
+              tenant: true,
+            },
+          },
+        },
+      });
+
+      return property;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
   async create(
     propertyInfo: Omit<Prisma.PropertyCreateInput, "location" | "manager">,
     managerCognitoId: string,

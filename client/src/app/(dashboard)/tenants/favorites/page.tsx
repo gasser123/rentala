@@ -5,7 +5,6 @@ import PropertyCard from "@/components/search/PropertyCard";
 import { useGetAuthUserQuery } from "@/state/api";
 import { useGetPropertiesQuery } from "@/state/properties-api";
 import { useGetTenantQuery } from "@/state/tenants-api";
-import { Property } from "@/types/prismaTypes";
 
 const FavoritesPage = () => {
   const { data: authUser } = useGetAuthUserQuery();

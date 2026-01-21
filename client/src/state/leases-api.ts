@@ -11,7 +11,15 @@ export const leasesApiSlice = api.injectEndpoints({
       query: (leaseId) => `/leases/${leaseId}/payments`,
       providesTags: ["Payment"],
     }),
+    getPropertyLeases: builder.query<Lease[], number>({
+      query: (propertyId) => `/properties/${propertyId}/leases`,
+      providesTags: ["Lease"],
+    }),
   }),
 });
 
-export const { useGetLeasesQuery, useGetPaymentsQuery } = leasesApiSlice;
+export const {
+  useGetLeasesQuery,
+  useGetPaymentsQuery,
+  useGetPropertyLeasesQuery,
+} = leasesApiSlice;

@@ -37,6 +37,20 @@ export const getProperty = async (req: Request, res: Response) => {
   }
 };
 
+export const getPropertyLeases = async (req: Request, res: Response) => {
+  try {
+    const propertyId = parseInt(req.params.id, 10);
+    const property = await propertyService.findPropertyWithLeases(propertyId);
+    if (!property) {
+      res.status(404).json({ message: "Property not found" });
+      return;
+    }
+    res.json(property.leases);
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 export const createProperty = async (req: Request, res: Response) => {
   try {
     const files = req.files as Express.Multer.File[];
