@@ -1,5 +1,6 @@
 import { Property, Tenant } from "@/types/prismaTypes";
 import { api } from "./api";
+import { withToast } from "@/lib/utils";
 
 export const tenantsApiSlice = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -13,6 +14,12 @@ export const tenantsApiSlice = api.injectEndpoints({
         body: updatedTenant,
       }),
       invalidatesTags: ({ result }) => [{ type: "Tenant", id: result?.id }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to update tenant settings",
+          success: "Settings updated successfully",
+        });
+      },
     }),
     addFavoriteProperty: builder.mutation<
       Tenant,
@@ -26,6 +33,12 @@ export const tenantsApiSlice = api.injectEndpoints({
         { type: "Tenant", id: result?.id },
         { type: "Property", id: "LIST" },
       ],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to add favorite property",
+          success: "Property added to favorites",
+        });
+      },
     }),
     removeFavoriteProperty: builder.mutation<
       Tenant,
@@ -39,12 +52,23 @@ export const tenantsApiSlice = api.injectEndpoints({
         { type: "Tenant", id: result?.id },
         { type: "Property", id: "LIST" },
       ],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to remove favorite property",
+          success: "Property removed from favorites",
+        });
+      },
     }),
     getTenant: builder.query<Tenant, string>({
       query: (cognitoId) => {
         return { url: `/tenants/${cognitoId}` };
       },
       providesTags: (result) => [{ type: "Tenant", id: result?.id }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch tenant details",
+        });
+      },
     }),
     getCurrentResidences: builder.query<Property[], string>({
       query: (cognitoId) => {
@@ -57,6 +81,11 @@ export const tenantsApiSlice = api.injectEndpoints({
               { type: "Property", id: "LIST" },
             ]
           : [{ type: "Property", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch current residences",
+        });
+      },
     }),
   }),
 });

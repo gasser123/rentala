@@ -1,7 +1,7 @@
 import { Property } from "@/types/prismaTypes";
 import { api } from "./api";
 import { FiltersState } from ".";
-import { cleanParams } from "@/lib/utils";
+import { cleanParams, withToast } from "@/lib/utils";
 
 export const propertiesApiSlice = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -34,12 +34,22 @@ export const propertiesApiSlice = api.injectEndpoints({
               { type: "Property", id: "LIST" },
             ]
           : [{ type: "Property", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch properties",
+        });
+      },
     }),
     getProperty: builder.query<Property, number>({
       query: (propertyId) => {
         return { url: `/properties/${propertyId}` };
       },
       providesTags: (result, error, id) => [{ type: "Property", id }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch property details",
+        });
+      },
     }),
     createProperty: builder.mutation<Property, FormData>({
       query: (newProperty) => ({
@@ -51,6 +61,12 @@ export const propertiesApiSlice = api.injectEndpoints({
         { type: "Property", id: "LIST" },
         { type: "Manager", id: result?.manager.id },
       ],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to create property",
+          success: "Property created successfully",
+        });
+      },
     }),
   }),
 });

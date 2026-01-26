@@ -1,5 +1,6 @@
 import { Application, Lease } from "@/types/prismaTypes";
 import { api } from "./api";
+import { withToast } from "@/lib/utils";
 
 export const applicationsApiSlice = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -18,6 +19,11 @@ export const applicationsApiSlice = api.injectEndpoints({
         return `/applications?${queryParams.toString()}`;
       },
       providesTags: ["Application"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch applications.",
+        });
+      },
     }),
     updateApplicationStatus: builder.mutation<
       Application & { lease?: Lease },
@@ -29,6 +35,12 @@ export const applicationsApiSlice = api.injectEndpoints({
         body: { status },
       }),
       invalidatesTags: ["Application", "Lease"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to update application status",
+          success: "Application status updated successfully",
+        });
+      },
     }),
     createApplication: builder.mutation<Application, Partial<Application>>({
       query: (applicationData) => ({
@@ -37,6 +49,12 @@ export const applicationsApiSlice = api.injectEndpoints({
         body: applicationData,
       }),
       invalidatesTags: ["Application"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to create application",
+          success: "Application created successfully",
+        });
+      },
     }),
   }),
 });

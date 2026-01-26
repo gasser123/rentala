@@ -1,5 +1,6 @@
 import { Manager, Property } from "@/types/prismaTypes";
 import { api } from "./api";
+import { withToast } from "@/lib/utils";
 
 export const managersApiSlice = api.injectEndpoints({
   endpoints: (builder) => ({
@@ -13,6 +14,12 @@ export const managersApiSlice = api.injectEndpoints({
         body: updatedManager,
       }),
       invalidatesTags: ({ result }) => [{ type: "Manager", id: result?.id }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to update settings",
+          success: "Settings updated successfully",
+        });
+      },
     }),
     getManagerProperties: builder.query<Property[], string>({
       query: (cognitoId) => {
@@ -25,6 +32,11 @@ export const managersApiSlice = api.injectEndpoints({
               { type: "Property", id: "LIST" },
             ]
           : [{ type: "Property", id: "LIST" }],
+      async onQueryStarted(_, { queryFulfilled }) {
+        await withToast(queryFulfilled, {
+          error: "Failed to fetch properties",
+        });
+      },
     }),
   }),
 });
