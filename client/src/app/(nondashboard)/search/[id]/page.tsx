@@ -1,4 +1,5 @@
 "use client";
+import ApplicationModal from "@/components/applications/ApplicationModal";
 import ContactWidget from "@/components/search/listings/ContactWidget";
 import ImagePreviews from "@/components/search/listings/ImagePreviews";
 import PropertyDetails from "@/components/search/listings/PropertyDetails";
@@ -27,6 +28,13 @@ const SingleListingPage = () => {
         <div className="order-1 md:order-2">
           <ContactWidget onOpenModal={() => setIsModalOpen(true)} />
         </div>
+        {authUser && (
+          <ApplicationModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            propertyId={propertyId}
+          />
+        )}
       </div>
     </div>
   );

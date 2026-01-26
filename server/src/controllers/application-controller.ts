@@ -4,23 +4,26 @@ import { prisma } from "../prisma";
 import { LeaseService } from "../services/lease-service";
 import { PropertyService } from "../services/property-service";
 import { LocationService } from "../services/location-service";
+import { TenantService } from "../services/tenant-service";
 
 const propertyService = new PropertyService(
   prisma,
-  new LocationService(prisma)
+  new LocationService(prisma),
 );
 
 const applicationService = new ApplicationService(
   prisma,
   new LeaseService(prisma),
-  propertyService
+  propertyService,
 );
+
+const tenantService = new TenantService(prisma);
 export const getapplications = async (req: Request, res: Response) => {
   try {
     const { userId, userType } = req.query;
     const applications = await applicationService.findApplications(
       String(userId),
-      String(userType)
+      String(userType),
     );
     res.status(200).json(applications);
   } catch (error) {
@@ -30,7 +33,7 @@ export const getapplications = async (req: Request, res: Response) => {
 
 export const createApplication = async (req: Request, res: Response) => {
   try {
-    const {
+    let {
       applicationDate,
       status,
       propertyId,
@@ -40,14 +43,26 @@ export const createApplication = async (req: Request, res: Response) => {
       phoneNumber,
       message,
     } = req.body;
-    const property = await propertyService.findPropertyForApplication(
-      propertyId
-    );
+    const property =
+      await propertyService.findPropertyForApplication(propertyId);
 
     if (!property) {
       return res.status(404).json({ message: "Property not found" });
     }
 
+    status = "Pending";
+    applicationDate = new Date().toISOString();
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+    tenantCognitoId = req.user.id;
+    const tenant = await tenantService.findOne(tenantCognitoId);
+    if (!tenant) {
+      return res.status(404).json({ message: "Tenant not found" });
+    }
+    name = tenant.name;
+    email = tenant.email;
+    phoneNumber = tenant.phoneNumber;
     const newApplication = await applicationService.create(property, {
       applicationDate,
       email,
@@ -76,7 +91,7 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
     }
     const updatedApplication = await applicationService.updateApplicationStatus(
       application,
-      status
+      status,
     );
     res.json(updatedApplication);
   } catch (error) {
