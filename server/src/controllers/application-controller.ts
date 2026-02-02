@@ -21,6 +21,11 @@ const tenantService = new TenantService(prisma);
 export const getapplications = async (req: Request, res: Response) => {
   try {
     const { userId, userType } = req.query;
+    const { id, role } = req.user!;
+    if (id !== String(userId) || role !== String(userType)) {
+      res.status(403).json({ message: "Forbidden" });
+      return;
+    }
     const applications = await applicationService.findApplications(
       String(userId),
       String(userType),
@@ -84,9 +89,15 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
+    const { id: userId } = req.user!;
     const application = await applicationService.findUnique(Number(id));
     if (!application) {
       res.status(404).json({ message: "Application not found" });
+      return;
+    }
+
+    if (application.property.managerCognitoId !== userId) {
+      res.status(403).json({ message: "Forbidden" });
       return;
     }
     const updatedApplication = await applicationService.updateApplicationStatus(

@@ -3,9 +3,20 @@ import { Lease, PrismaClient } from "@prisma/client";
 export class LeaseService {
   constructor(private prisma: PrismaClient) {}
 
-  async getLeases() {
+  async getLeases(userId: string, userRole: string) {
+    const whereClause =
+      userRole === "tenant"
+        ? { tenantCognitoId: userId }
+        : userRole === "manager"
+          ? {
+              property: {
+                managerCognitoId: userId,
+              },
+            }
+          : {};
     try {
       const leases = await this.prisma.lease.findMany({
+        where: whereClause,
         include: {
           tenant: true,
           property: true,
@@ -58,6 +69,25 @@ export class LeaseService {
     try {
       const lease = await this.prisma.lease.create({
         data: leaseInfo,
+      });
+      return lease;
+    } catch (error) {
+      console.error(error, "error creating lease");
+      throw error;
+    }
+  }
+
+  async getLeaseById(id: number) {
+    try {
+      const lease = await this.prisma.lease.findUnique({
+        where: { id },
+        include: {
+          property: {
+            include: {
+              manager: true,
+            },
+          },
+        },
       });
       return lease;
     } catch (error) {

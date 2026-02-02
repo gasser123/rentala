@@ -5,7 +5,7 @@ import { LocationService } from "../services/location-service";
 import { prisma } from "../prisma";
 const propertyService = new PropertyService(
   prisma,
-  new LocationService(prisma)
+  new LocationService(prisma),
 );
 const tenantService = new TenantService(prisma);
 export const getTenant = async (req: Request, res: Response): Promise<void> => {
@@ -24,10 +24,17 @@ export const getTenant = async (req: Request, res: Response): Promise<void> => {
 
 export const createTenant = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId, email, phoneNumber, name } = req.body;
+    const { id: userId } = req.user!;
+    if (userId !== cognitoId) {
+      res
+        .status(403)
+        .json({ message: "Forbidden: Cannot create tenant for another user" });
+      return;
+    }
     const tenant = await tenantService.create({
       cognitoId,
       email,
@@ -42,11 +49,18 @@ export const createTenant = async (
 
 export const updateTenant = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId } = req.params;
     const { email, phoneNumber, name } = req.body;
+    const { id: userId } = req.user!;
+    if (userId !== cognitoId) {
+      res
+        .status(403)
+        .json({ message: "Forbidden: Cannot update another tenant's profile" });
+      return;
+    }
     const tenant = await tenantService.update({
       cognitoId,
       email,
@@ -61,10 +75,17 @@ export const updateTenant = async (
 
 export const getCurrentResidences = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId } = req.params;
+    const { id: userId } = req.user!;
+    if (userId !== cognitoId) {
+      res.status(403).json({
+        message: "Forbidden: Cannot view another tenant's residences",
+      });
+      return;
+    }
     const properties = await propertyService.findByTenantCognitoId(cognitoId);
     res.json(properties);
   } catch (error) {
@@ -74,14 +95,21 @@ export const getCurrentResidences = async (
 
 export const addFavoriteProperty = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId, propertyId } = req.params;
+    const { id: userId } = req.user!;
+    if (userId !== cognitoId) {
+      res.status(403).json({
+        message: "Forbidden: Cannot add favorite property for another tenant",
+      });
+      return;
+    }
     const propertyIdNumber = Number(propertyId);
     const updatedTenant = await tenantService.addFavoriteProperty(
       cognitoId,
-      propertyIdNumber
+      propertyIdNumber,
     );
     if (updatedTenant) {
       res.json(updatedTenant);
@@ -95,14 +123,22 @@ export const addFavoriteProperty = async (
 
 export const removeFavoriteProperty = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId, propertyId } = req.params;
+    const { id: userId } = req.user!;
+    if (userId !== cognitoId) {
+      res.status(403).json({
+        message:
+          "Forbidden: Cannot remove favorite property for another tenant",
+      });
+      return;
+    }
     const propertyIdNumber = Number(propertyId);
     const updatedTenant = await tenantService.removeFavoriteProperty(
       cognitoId,
-      propertyIdNumber
+      propertyIdNumber,
     );
     if (updatedTenant) {
       res.json(updatedTenant);

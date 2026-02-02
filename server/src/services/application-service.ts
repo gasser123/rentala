@@ -8,7 +8,7 @@ export class ApplicationService {
   constructor(
     private prisma: PrismaClient,
     private leaseService: LeaseService,
-    private propertyService: PropertyService
+    private propertyService: PropertyService,
   ) {}
   async findApplications(userId: string, userType: string) {
     try {
@@ -40,7 +40,7 @@ export class ApplicationService {
         applications.map(async (app) => {
           const lease = await this.leaseService.findTenantPropertyLease(
             app.tenantCognitoId,
-            app.propertyId
+            app.propertyId,
           );
 
           return {
@@ -57,7 +57,7 @@ export class ApplicationService {
                 }
               : null,
           };
-        })
+        }),
       );
       return formattedApplications;
     } catch (error) {
@@ -71,7 +71,7 @@ export class ApplicationService {
       pricePerMonth: number;
       securityDeposit: number;
     },
-    createApplicationInput: CreateApplicationInput
+    createApplicationInput: CreateApplicationInput,
   ) {
     try {
       const {
@@ -90,7 +90,7 @@ export class ApplicationService {
           data: {
             startDate: new Date(), //today
             endDate: new Date(
-              new Date().setFullYear(new Date().getFullYear() + 1)
+              new Date().setFullYear(new Date().getFullYear() + 1),
             ), // 1 year from today
             rent: propertyInfo.pricePerMonth,
             deposit: propertyInfo.securityDeposit,
@@ -153,7 +153,11 @@ export class ApplicationService {
           id,
         },
         include: {
-          property: true,
+          property: {
+            include: {
+              manager: true,
+            },
+          },
           tenant: true,
         },
       });
@@ -166,7 +170,7 @@ export class ApplicationService {
 
   async updateApplicationStatus(
     application: Application & { property: Property },
-    status: Application["status"]
+    status: Application["status"],
   ) {
     try {
       let updatedApplication;
@@ -174,7 +178,7 @@ export class ApplicationService {
         const newLease = await this.leaseService.create({
           startDate: new Date(),
           endDate: new Date(
-            new Date().setFullYear(new Date().getFullYear() + 1)
+            new Date().setFullYear(new Date().getFullYear() + 1),
           ),
           rent: application.property.pricePerMonth,
           deposit: application.property.securityDeposit,
@@ -184,7 +188,7 @@ export class ApplicationService {
         // update the property to connect to the tenant
         await this.propertyService.connectPropertyToTenant(
           application.propertyId,
-          application.tenantCognitoId
+          application.tenantCognitoId,
         );
 
         // Update the application with the new lease ID

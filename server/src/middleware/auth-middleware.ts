@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { JwtPayload } from "jsonwebtoken";
+import { verifyJWT } from "../util/verify-jwt";
 
 interface DecodedToken extends JwtPayload {
   sub: string;
@@ -18,14 +19,18 @@ declare global {
 }
 
 export const authMiddleware = (allowedRoles: string[]) => {
-  return (req: Request, res: Response, next: NextFunction): void => {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ): Promise<void> => {
     const token = req.headers.authorization?.split(" ")[1];
     if (!token) {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
     try {
-      const decoded = jwt.decode(token) as DecodedToken;
+      const decoded = (await verifyJWT(token)) as DecodedToken;
       const userRole = decoded["custom:role"] || "";
       req.user = {
         id: decoded.sub,

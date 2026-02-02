@@ -1,0 +1,28 @@
+# Ignore Docker-related files
+Dockerfile*
+.dockerignore
+docker-compose.yml
+
+# OS / editor
+.DS_Store
+.vscode
+.idea
+
+# git
+.git
+.gitignore
+
+# dependencies
+node_modules
+
+# Next.js build output
+.next
+out
+
+# logs
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# env files
+.env*

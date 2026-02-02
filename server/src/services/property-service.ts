@@ -6,7 +6,7 @@ import { LocationService } from "./location-service";
 export class PropertyService {
   constructor(
     private prisma: PrismaClient,
-    private locationService: LocationService
+    private locationService: LocationService,
   ) {}
   async findFiltered(filters: PropertiesQuery) {
     try {
@@ -30,19 +30,19 @@ export class PropertyService {
           .split(",")
           .map((id) => parseInt(id, 10));
         whereConditions.push(
-          Prisma.sql`p.id IN (${Prisma.join(favoriteIdsArray)})`
+          Prisma.sql`p.id IN (${Prisma.join(favoriteIdsArray)})`,
         );
       }
 
       if (priceMin) {
         whereConditions.push(
-          Prisma.sql`p."pricePerMonth" >= ${parseFloat(priceMin)}`
+          Prisma.sql`p."pricePerMonth" >= ${parseFloat(priceMin)}`,
         );
       }
 
       if (priceMax) {
         whereConditions.push(
-          Prisma.sql`p."pricePerMonth" <= ${parseFloat(priceMax)}`
+          Prisma.sql`p."pricePerMonth" <= ${parseFloat(priceMax)}`,
         );
       }
 
@@ -56,18 +56,18 @@ export class PropertyService {
 
       if (squareFeetMin) {
         whereConditions.push(
-          Prisma.sql`p."squareFeet" >= ${Number(squareFeetMin)}`
+          Prisma.sql`p."squareFeet" >= ${Number(squareFeetMin)}`,
         );
       }
 
       if (squareFeetMax) {
         whereConditions.push(
-          Prisma.sql`p."squareFeet" <= ${Number(squareFeetMax)}`
+          Prisma.sql`p."squareFeet" <= ${Number(squareFeetMax)}`,
         );
       }
       if (propertyType && propertyType !== "any") {
         whereConditions.push(
-          Prisma.sql`p."propertyType" = ${propertyType}::"PropertyType"`
+          Prisma.sql`p."propertyType" = ${propertyType}::"PropertyType"`,
         );
       }
 
@@ -97,7 +97,7 @@ export class PropertyService {
         const radiusInKm = 1000;
         const degrees = radiusInKm / 111; // converts km to degrees
         whereConditions.push(
-          Prisma.sql`ST_DWithin(l.coordinates::geometry, ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326), ${degrees})`
+          Prisma.sql`ST_DWithin(l.coordinates::geometry, ST_SetSRID(ST_MakePoint(${lng}, ${lat}), 4326), ${degrees})`,
         );
       }
 
@@ -162,12 +162,21 @@ export class PropertyService {
     }
   }
 
-  async findPropertyWithLeases(propertyId: number) {
+  async findPropertyWithLeases(
+    propertyId: number,
+    userId: string,
+    userRole: string,
+  ) {
     try {
       const property = await this.prisma.property.findUnique({
-        where: { id: propertyId },
+        where: {
+          id: propertyId,
+          managerCognitoId: userRole === "manager" ? userId : undefined,
+        },
         include: {
           leases: {
+            where:
+              userRole === "tenant" ? { tenantCognitoId: userId } : undefined,
             include: {
               tenant: true,
             },
@@ -187,14 +196,14 @@ export class PropertyService {
     managerCognitoId: string,
     locationData: Omit<Location, "id">,
     longitude: number,
-    latitude: number
+    latitude: number,
   ) {
     try {
       const {} = propertyInfo;
       const location = await this.locationService.create(
         locationData,
         longitude,
-        latitude
+        latitude,
       );
       const newPorperty = await this.prisma.property.create({
         data: {
@@ -243,7 +252,7 @@ export class PropertyService {
           };
 
           return propertyWithCoordinates;
-        })
+        }),
       );
 
       return propertiesWithFormattedLocation;
@@ -288,7 +297,7 @@ export class PropertyService {
           };
 
           return propertyWithCoordinates;
-        })
+        }),
       );
 
       return propertiesWithFormattedLocation;

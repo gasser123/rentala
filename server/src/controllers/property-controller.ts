@@ -12,7 +12,7 @@ const propertyService = new PropertyService(prisma, locationService);
 const amazonS3Service = new AmazonS3Service();
 export const getProperties = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const propertiesQuery = req.query as unknown as PropertiesQuery;
@@ -40,7 +40,12 @@ export const getProperty = async (req: Request, res: Response) => {
 export const getPropertyLeases = async (req: Request, res: Response) => {
   try {
     const propertyId = parseInt(req.params.id, 10);
-    const property = await propertyService.findPropertyWithLeases(propertyId);
+    const { id: userId, role } = req.user!;
+    const property = await propertyService.findPropertyWithLeases(
+      propertyId,
+      userId,
+      role,
+    );
     if (!property) {
       res.status(404).json({ message: "Property not found" });
       return;
@@ -63,6 +68,16 @@ export const createProperty = async (req: Request, res: Response) => {
       managerCognitoId,
       ...propertyData
     } = req.body;
+
+    const { id: userId } = req.user!;
+    if (managerCognitoId !== userId) {
+      res
+        .status(403)
+        .json({
+          message: "Forbidden: Cannot create property for another manager",
+        });
+      return;
+    }
     const photoUrls = await Promise.all(
       files.map(async (file) => {
         const uploadResult = await amazonS3Service.uploadToS3({
@@ -72,7 +87,7 @@ export const createProperty = async (req: Request, res: Response) => {
           ContentType: file.mimetype,
         });
         return uploadResult.Location;
-      })
+      }),
     );
 
     if (!photoUrls.every((url) => url !== undefined)) {
@@ -87,7 +102,7 @@ export const createProperty = async (req: Request, res: Response) => {
         postalcode: postalCode,
         format: "json",
         limit: "1",
-      }
+      },
     ).toString()}`;
     const geocodingResponse = await axios.get(geocodingUrl, {
       headers: {
@@ -126,7 +141,7 @@ export const createProperty = async (req: Request, res: Response) => {
       managerCognitoId,
       { address, city, state, country, postalCode },
       longtitude,
-      latitude
+      latitude,
     );
 
     res.status(201).json(newProperty);

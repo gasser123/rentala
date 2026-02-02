@@ -14,12 +14,16 @@ export const propertyRoutes = Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 propertyRoutes.get("/", getProperties);
-propertyRoutes.get("/:id/leases", getPropertyLeases);
+propertyRoutes.get(
+  "/:id/leases",
+  authMiddleware(["manager", "tenant"]),
+  getPropertyLeases,
+);
 propertyRoutes.get("/:id", getProperty);
 propertyRoutes.post(
   "/",
   authMiddleware(["manager"]),
   upload.array("photos"),
   validateBodyMiddleware(createPropertySchema),
-  createProperty
+  createProperty,
 );

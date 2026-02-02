@@ -9,7 +9,7 @@ const propertyService = new PropertyService(prisma, locationService);
 const managerService = new ManagerService(prisma);
 export const getManager = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId } = req.params;
@@ -26,10 +26,15 @@ export const getManager = async (
 
 export const createManager = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId, email, phoneNumber, name } = req.body;
+    const { id: userId } = req.user!;
+    if (cognitoId !== userId) {
+      res.status(403).json({ message: "Forbidden" });
+      return;
+    }
     const manager = await managerService.create({
       cognitoId,
       email,
@@ -44,10 +49,15 @@ export const createManager = async (
 
 export const updateManager = async (
   req: Request,
-  res: Response
+  res: Response,
 ): Promise<void> => {
   try {
     const { cognitoId } = req.params;
+    const { id: userId } = req.user!;
+    if (cognitoId !== userId) {
+      res.status(403).json({ message: "Forbidden" });
+      return;
+    }
     const { email, phoneNumber, name } = req.body;
     const manager = await managerService.update({
       cognitoId,
