@@ -60,9 +60,8 @@ enum ApplicationStatus {
 
 enum PaymentStatus {
   Pending
-  Paid
-  PartiallyPaid
-  Overdue
+  Succeeded
+  Failed
 }
 
 model Property {
@@ -145,6 +144,7 @@ model Application {
   property Property @relation(fields: [propertyId], references: [id])
   tenant   Tenant   @relation(fields: [tenantCognitoId], references: [cognitoId])
   lease    Lease?   @relation(fields: [leaseId], references: [id])
+  payment Payment?
 }
 
 model Lease {
@@ -166,10 +166,13 @@ model Payment {
   id            Int           @id @default(autoincrement())
   amountDue     Float
   amountPaid    Float
-  dueDate       DateTime
   paymentDate   DateTime
+  currency      String
+  stripeIntentId String
   paymentStatus PaymentStatus
-  leaseId       Int
-
-  lease Lease @relation(fields: [leaseId], references: [id])
+  leaseId       Int?
+  applicationId Int                 @unique
+  lease Lease? @relation(fields: [leaseId], references: [id])
+  application Application @relation(fields: [applicationId], references: [id])
+  createdAt     DateTime @default(now())
 }

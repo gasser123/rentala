@@ -25,12 +25,17 @@ services:
       - frontend
     env_file:
       - ./server/.env
-    environment:
-      CHOKIDAR_USEPOLLING: "true"
+    develop:
+      watch:
+        - action: sync
+          path: ./server
+          target: /app
+          initial_sync: true
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./server/package.json
 
-    volumes:
-      - ./server:/app
-      - /app/node_modules
     depends_on:
       - postgres
 
@@ -46,12 +51,17 @@ services:
       - frontend
     env_file:
       - ./client/.env
-    environment:
-      WATCHPACK_POLLING: "true"
+    develop:
+      watch:
+        - action: sync
+          path: ./client
+          target: /app
+          initial_sync: true
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: ./client/package.json
 
-    volumes:
-      - ./client:/app
-      - /app/node_modules
     depends_on:
       - server
 

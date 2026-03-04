@@ -9,7 +9,7 @@ import { managerRoutes } from "./routes/manager-routes";
 import { propertyRoutes } from "./routes/property-routes";
 import { leaseRoutes } from "./routes/lease-routes";
 import { applicationRoutes } from "./routes/application-routes";
-
+import {paymentRoutes} from "./routes/payment-routes"
 /* Configurations */
 dotenv.config();
 const app = express();
@@ -30,7 +30,7 @@ app.use("/tenants", authMiddleware(["tenant"]), tenantRoutes);
 app.use("/managers", authMiddleware(["manager"]), managerRoutes);
 app.use("/leases", leaseRoutes);
 app.use("/applications", applicationRoutes);
-
+app.use("/payments", paymentRoutes);
 /* Server */
 const PORT = Number(process.env.PORT) || 8080;
 app.listen(PORT, "0.0.0.0", () => {
