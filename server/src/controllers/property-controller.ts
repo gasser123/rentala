@@ -71,24 +71,30 @@ export const createProperty = async (req: Request, res: Response) => {
 
     const { id: userId } = req.user!;
     if (managerCognitoId !== userId) {
-      res
-        .status(403)
-        .json({
-          message: "Forbidden: Cannot create property for another manager",
-        });
+      res.status(403).json({
+        message: "Forbidden: Cannot create property for another manager",
+      });
       return;
     }
-    const photoUrls = await Promise.all(
-      files.map(async (file) => {
-        const uploadResult = await amazonS3Service.uploadToS3({
-          Bucket: process.env.S3_BUCKET_NAME!,
-          Key: `properties/${randomUUID()}-${file.originalname}`,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-        });
-        return uploadResult.Location;
-      }),
-    );
+    let photoUrls;
+    if (process.env.NODE_ENV === "production") {
+      photoUrls = await Promise.all(
+        files.map(async (file) => {
+          const uploadResult = await amazonS3Service.uploadToS3({
+            Bucket: process.env.S3_BUCKET_NAME!,
+            Key: `properties/${randomUUID()}-${file.originalname}`,
+            Body: file.buffer,
+            ContentType: file.mimetype,
+          });
+          return uploadResult.Location;
+        }),
+      );
+    } else {
+      photoUrls = files.map((file) => {
+        const fileUrl = `http://localhost:${process.env.PORT}/uploads/${file.filename}`;
+        return fileUrl;
+      });
+    }
 
     if (!photoUrls.every((url) => url !== undefined)) {
       throw new Error("Photo upload failed");

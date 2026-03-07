@@ -25,6 +25,8 @@ services:
       - frontend
     env_file:
       - ./server/.env
+    volumes:
+      - /app/uploads
     develop:
       watch:
         - action: sync
