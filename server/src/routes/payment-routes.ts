@@ -4,7 +4,7 @@ import {
   createCheckoutSession,
   getSessionStatus,
 } from "../controllers/payment-controller";
-
+import express from "express";
 export const paymentRoutes = Router();
 
 paymentRoutes.post(

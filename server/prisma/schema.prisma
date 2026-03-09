@@ -139,12 +139,9 @@ model Application {
   email           String
   phoneNumber     String
   message         String?
-  leaseId         Int?              @unique
-
   property Property @relation(fields: [propertyId], references: [id])
   tenant   Tenant   @relation(fields: [tenantCognitoId], references: [cognitoId])
-  lease    Lease?   @relation(fields: [leaseId], references: [id])
-  payment Payment?
+  lease    Lease?   
 }
 
 model Lease {
@@ -155,24 +152,22 @@ model Lease {
   deposit         Float
   propertyId      Int
   tenantCognitoId String
-
+  applicationId   Int      @unique
   property    Property     @relation(fields: [propertyId], references: [id])
   tenant      Tenant       @relation(fields: [tenantCognitoId], references: [cognitoId])
-  application Application?
+  application Application  @relation(fields: [applicationId], references: [id])
   payments    Payment[]
 }
 
 model Payment {
   id            Int           @id @default(autoincrement())
-  amountDue     Float
+  amountDue     Float         @default(0)
   amountPaid    Float
   paymentDate   DateTime
   currency      String
-  stripeIntentId String
+  stripeSessionId String      @unique
   paymentStatus PaymentStatus
-  leaseId       Int?
-  applicationId Int                 @unique
-  lease Lease? @relation(fields: [leaseId], references: [id])
-  application Application @relation(fields: [applicationId], references: [id])
+  leaseId       Int
+  lease Lease   @relation(fields: [leaseId], references: [id])
   createdAt     DateTime @default(now())
 }

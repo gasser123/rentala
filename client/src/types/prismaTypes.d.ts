@@ -116,9 +116,8 @@ export type ApplicationStatus = (typeof ApplicationStatus)[keyof typeof Applicat
 
 export const PaymentStatus: {
   Pending: 'Pending',
-  Paid: 'Paid',
-  PartiallyPaid: 'PartiallyPaid',
-  Overdue: 'Overdue'
+  Succeeded: 'Succeeded',
+  Failed: 'Failed'
 };
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
@@ -6390,13 +6389,11 @@ export namespace Prisma {
   export type ApplicationAvgAggregateOutputType = {
     id: number | null
     propertyId: number | null
-    leaseId: number | null
   }
 
   export type ApplicationSumAggregateOutputType = {
     id: number | null
     propertyId: number | null
-    leaseId: number | null
   }
 
   export type ApplicationMinAggregateOutputType = {
@@ -6409,7 +6406,6 @@ export namespace Prisma {
     email: string | null
     phoneNumber: string | null
     message: string | null
-    leaseId: number | null
   }
 
   export type ApplicationMaxAggregateOutputType = {
@@ -6422,7 +6418,6 @@ export namespace Prisma {
     email: string | null
     phoneNumber: string | null
     message: string | null
-    leaseId: number | null
   }
 
   export type ApplicationCountAggregateOutputType = {
@@ -6435,7 +6430,6 @@ export namespace Prisma {
     email: number
     phoneNumber: number
     message: number
-    leaseId: number
     _all: number
   }
 
@@ -6443,13 +6437,11 @@ export namespace Prisma {
   export type ApplicationAvgAggregateInputType = {
     id?: true
     propertyId?: true
-    leaseId?: true
   }
 
   export type ApplicationSumAggregateInputType = {
     id?: true
     propertyId?: true
-    leaseId?: true
   }
 
   export type ApplicationMinAggregateInputType = {
@@ -6462,7 +6454,6 @@ export namespace Prisma {
     email?: true
     phoneNumber?: true
     message?: true
-    leaseId?: true
   }
 
   export type ApplicationMaxAggregateInputType = {
@@ -6475,7 +6466,6 @@ export namespace Prisma {
     email?: true
     phoneNumber?: true
     message?: true
-    leaseId?: true
   }
 
   export type ApplicationCountAggregateInputType = {
@@ -6488,7 +6478,6 @@ export namespace Prisma {
     email?: true
     phoneNumber?: true
     message?: true
-    leaseId?: true
     _all?: true
   }
 
@@ -6588,7 +6577,6 @@ export namespace Prisma {
     email: string
     phoneNumber: string
     message: string | null
-    leaseId: number | null
     _count: ApplicationCountAggregateOutputType | null
     _avg: ApplicationAvgAggregateOutputType | null
     _sum: ApplicationSumAggregateOutputType | null
@@ -6620,7 +6608,6 @@ export namespace Prisma {
     email?: boolean
     phoneNumber?: boolean
     message?: boolean
-    leaseId?: boolean
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
     lease?: boolean | Application$leaseArgs<ExtArgs>
@@ -6636,10 +6623,8 @@ export namespace Prisma {
     email?: boolean
     phoneNumber?: boolean
     message?: boolean
-    leaseId?: boolean
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    lease?: boolean | Application$leaseArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
   export type ApplicationSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -6652,10 +6637,8 @@ export namespace Prisma {
     email?: boolean
     phoneNumber?: boolean
     message?: boolean
-    leaseId?: boolean
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    lease?: boolean | Application$leaseArgs<ExtArgs>
   }, ExtArgs["result"]["application"]>
 
   export type ApplicationSelectScalar = {
@@ -6668,10 +6651,9 @@ export namespace Prisma {
     email?: boolean
     phoneNumber?: boolean
     message?: boolean
-    leaseId?: boolean
   }
 
-  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationDate" | "status" | "propertyId" | "tenantCognitoId" | "name" | "email" | "phoneNumber" | "message" | "leaseId", ExtArgs["result"]["application"]>
+  export type ApplicationOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "applicationDate" | "status" | "propertyId" | "tenantCognitoId" | "name" | "email" | "phoneNumber" | "message", ExtArgs["result"]["application"]>
   export type ApplicationInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
@@ -6680,12 +6662,10 @@ export namespace Prisma {
   export type ApplicationIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    lease?: boolean | Application$leaseArgs<ExtArgs>
   }
   export type ApplicationIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    lease?: boolean | Application$leaseArgs<ExtArgs>
   }
 
   export type $ApplicationPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6705,7 +6685,6 @@ export namespace Prisma {
       email: string
       phoneNumber: string
       message: string | null
-      leaseId: number | null
     }, ExtArgs["result"]["application"]>
     composites: {}
   }
@@ -7141,7 +7120,6 @@ export namespace Prisma {
     readonly email: FieldRef<"Application", 'String'>
     readonly phoneNumber: FieldRef<"Application", 'String'>
     readonly message: FieldRef<"Application", 'String'>
-    readonly leaseId: FieldRef<"Application", 'Int'>
   }
     
 
@@ -7592,6 +7570,7 @@ export namespace Prisma {
     rent: number | null
     deposit: number | null
     propertyId: number | null
+    applicationId: number | null
   }
 
   export type LeaseSumAggregateOutputType = {
@@ -7599,6 +7578,7 @@ export namespace Prisma {
     rent: number | null
     deposit: number | null
     propertyId: number | null
+    applicationId: number | null
   }
 
   export type LeaseMinAggregateOutputType = {
@@ -7609,6 +7589,7 @@ export namespace Prisma {
     deposit: number | null
     propertyId: number | null
     tenantCognitoId: string | null
+    applicationId: number | null
   }
 
   export type LeaseMaxAggregateOutputType = {
@@ -7619,6 +7600,7 @@ export namespace Prisma {
     deposit: number | null
     propertyId: number | null
     tenantCognitoId: string | null
+    applicationId: number | null
   }
 
   export type LeaseCountAggregateOutputType = {
@@ -7629,6 +7611,7 @@ export namespace Prisma {
     deposit: number
     propertyId: number
     tenantCognitoId: number
+    applicationId: number
     _all: number
   }
 
@@ -7638,6 +7621,7 @@ export namespace Prisma {
     rent?: true
     deposit?: true
     propertyId?: true
+    applicationId?: true
   }
 
   export type LeaseSumAggregateInputType = {
@@ -7645,6 +7629,7 @@ export namespace Prisma {
     rent?: true
     deposit?: true
     propertyId?: true
+    applicationId?: true
   }
 
   export type LeaseMinAggregateInputType = {
@@ -7655,6 +7640,7 @@ export namespace Prisma {
     deposit?: true
     propertyId?: true
     tenantCognitoId?: true
+    applicationId?: true
   }
 
   export type LeaseMaxAggregateInputType = {
@@ -7665,6 +7651,7 @@ export namespace Prisma {
     deposit?: true
     propertyId?: true
     tenantCognitoId?: true
+    applicationId?: true
   }
 
   export type LeaseCountAggregateInputType = {
@@ -7675,6 +7662,7 @@ export namespace Prisma {
     deposit?: true
     propertyId?: true
     tenantCognitoId?: true
+    applicationId?: true
     _all?: true
   }
 
@@ -7772,6 +7760,7 @@ export namespace Prisma {
     deposit: number
     propertyId: number
     tenantCognitoId: string
+    applicationId: number
     _count: LeaseCountAggregateOutputType | null
     _avg: LeaseAvgAggregateOutputType | null
     _sum: LeaseSumAggregateOutputType | null
@@ -7801,9 +7790,10 @@ export namespace Prisma {
     deposit?: boolean
     propertyId?: boolean
     tenantCognitoId?: boolean
+    applicationId?: boolean
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    application?: boolean | Lease$applicationArgs<ExtArgs>
+    application?: boolean | ApplicationDefaultArgs<ExtArgs>
     payments?: boolean | Lease$paymentsArgs<ExtArgs>
     _count?: boolean | LeaseCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lease"]>
@@ -7816,8 +7806,10 @@ export namespace Prisma {
     deposit?: boolean
     propertyId?: boolean
     tenantCognitoId?: boolean
+    applicationId?: boolean
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    application?: boolean | ApplicationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lease"]>
 
   export type LeaseSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -7828,8 +7820,10 @@ export namespace Prisma {
     deposit?: boolean
     propertyId?: boolean
     tenantCognitoId?: boolean
+    applicationId?: boolean
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    application?: boolean | ApplicationDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["lease"]>
 
   export type LeaseSelectScalar = {
@@ -7840,23 +7834,26 @@ export namespace Prisma {
     deposit?: boolean
     propertyId?: boolean
     tenantCognitoId?: boolean
+    applicationId?: boolean
   }
 
-  export type LeaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "startDate" | "endDate" | "rent" | "deposit" | "propertyId" | "tenantCognitoId", ExtArgs["result"]["lease"]>
+  export type LeaseOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "startDate" | "endDate" | "rent" | "deposit" | "propertyId" | "tenantCognitoId" | "applicationId", ExtArgs["result"]["lease"]>
   export type LeaseInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
-    application?: boolean | Lease$applicationArgs<ExtArgs>
+    application?: boolean | ApplicationDefaultArgs<ExtArgs>
     payments?: boolean | Lease$paymentsArgs<ExtArgs>
     _count?: boolean | LeaseCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type LeaseIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    application?: boolean | ApplicationDefaultArgs<ExtArgs>
   }
   export type LeaseIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     property?: boolean | PropertyDefaultArgs<ExtArgs>
     tenant?: boolean | TenantDefaultArgs<ExtArgs>
+    application?: boolean | ApplicationDefaultArgs<ExtArgs>
   }
 
   export type $LeasePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -7864,7 +7861,7 @@ export namespace Prisma {
     objects: {
       property: Prisma.$PropertyPayload<ExtArgs>
       tenant: Prisma.$TenantPayload<ExtArgs>
-      application: Prisma.$ApplicationPayload<ExtArgs> | null
+      application: Prisma.$ApplicationPayload<ExtArgs>
       payments: Prisma.$PaymentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
@@ -7875,6 +7872,7 @@ export namespace Prisma {
       deposit: number
       propertyId: number
       tenantCognitoId: string
+      applicationId: number
     }, ExtArgs["result"]["lease"]>
     composites: {}
   }
@@ -8271,7 +8269,7 @@ export namespace Prisma {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     property<T extends PropertyDefaultArgs<ExtArgs> = {}>(args?: Subset<T, PropertyDefaultArgs<ExtArgs>>): Prisma__PropertyClient<$Result.GetResult<Prisma.$PropertyPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     tenant<T extends TenantDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TenantDefaultArgs<ExtArgs>>): Prisma__TenantClient<$Result.GetResult<Prisma.$TenantPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    application<T extends Lease$applicationArgs<ExtArgs> = {}>(args?: Subset<T, Lease$applicationArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    application<T extends ApplicationDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ApplicationDefaultArgs<ExtArgs>>): Prisma__ApplicationClient<$Result.GetResult<Prisma.$ApplicationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     payments<T extends Lease$paymentsArgs<ExtArgs> = {}>(args?: Subset<T, Lease$paymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -8309,6 +8307,7 @@ export namespace Prisma {
     readonly deposit: FieldRef<"Lease", 'Float'>
     readonly propertyId: FieldRef<"Lease", 'Int'>
     readonly tenantCognitoId: FieldRef<"Lease", 'String'>
+    readonly applicationId: FieldRef<"Lease", 'Int'>
   }
     
 
@@ -8705,25 +8704,6 @@ export namespace Prisma {
   }
 
   /**
-   * Lease.application
-   */
-  export type Lease$applicationArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Application
-     */
-    select?: ApplicationSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Application
-     */
-    omit?: ApplicationOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: ApplicationInclude<ExtArgs> | null
-    where?: ApplicationWhereInput
-  }
-
-  /**
    * Lease.payments
    */
   export type Lease$paymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -8796,30 +8776,36 @@ export namespace Prisma {
     id: number | null
     amountDue: number | null
     amountPaid: number | null
-    dueDate: Date | null
     paymentDate: Date | null
+    currency: string | null
+    stripeSessionId: string | null
     paymentStatus: $Enums.PaymentStatus | null
     leaseId: number | null
+    createdAt: Date | null
   }
 
   export type PaymentMaxAggregateOutputType = {
     id: number | null
     amountDue: number | null
     amountPaid: number | null
-    dueDate: Date | null
     paymentDate: Date | null
+    currency: string | null
+    stripeSessionId: string | null
     paymentStatus: $Enums.PaymentStatus | null
     leaseId: number | null
+    createdAt: Date | null
   }
 
   export type PaymentCountAggregateOutputType = {
     id: number
     amountDue: number
     amountPaid: number
-    dueDate: number
     paymentDate: number
+    currency: number
+    stripeSessionId: number
     paymentStatus: number
     leaseId: number
+    createdAt: number
     _all: number
   }
 
@@ -8842,30 +8828,36 @@ export namespace Prisma {
     id?: true
     amountDue?: true
     amountPaid?: true
-    dueDate?: true
     paymentDate?: true
+    currency?: true
+    stripeSessionId?: true
     paymentStatus?: true
     leaseId?: true
+    createdAt?: true
   }
 
   export type PaymentMaxAggregateInputType = {
     id?: true
     amountDue?: true
     amountPaid?: true
-    dueDate?: true
     paymentDate?: true
+    currency?: true
+    stripeSessionId?: true
     paymentStatus?: true
     leaseId?: true
+    createdAt?: true
   }
 
   export type PaymentCountAggregateInputType = {
     id?: true
     amountDue?: true
     amountPaid?: true
-    dueDate?: true
     paymentDate?: true
+    currency?: true
+    stripeSessionId?: true
     paymentStatus?: true
     leaseId?: true
+    createdAt?: true
     _all?: true
   }
 
@@ -8959,10 +8951,12 @@ export namespace Prisma {
     id: number
     amountDue: number
     amountPaid: number
-    dueDate: Date
     paymentDate: Date
+    currency: string
+    stripeSessionId: string
     paymentStatus: $Enums.PaymentStatus
     leaseId: number
+    createdAt: Date
     _count: PaymentCountAggregateOutputType | null
     _avg: PaymentAvgAggregateOutputType | null
     _sum: PaymentSumAggregateOutputType | null
@@ -8988,10 +8982,12 @@ export namespace Prisma {
     id?: boolean
     amountDue?: boolean
     amountPaid?: boolean
-    dueDate?: boolean
     paymentDate?: boolean
+    currency?: boolean
+    stripeSessionId?: boolean
     paymentStatus?: boolean
     leaseId?: boolean
+    createdAt?: boolean
     lease?: boolean | LeaseDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
@@ -8999,10 +8995,12 @@ export namespace Prisma {
     id?: boolean
     amountDue?: boolean
     amountPaid?: boolean
-    dueDate?: boolean
     paymentDate?: boolean
+    currency?: boolean
+    stripeSessionId?: boolean
     paymentStatus?: boolean
     leaseId?: boolean
+    createdAt?: boolean
     lease?: boolean | LeaseDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
@@ -9010,10 +9008,12 @@ export namespace Prisma {
     id?: boolean
     amountDue?: boolean
     amountPaid?: boolean
-    dueDate?: boolean
     paymentDate?: boolean
+    currency?: boolean
+    stripeSessionId?: boolean
     paymentStatus?: boolean
     leaseId?: boolean
+    createdAt?: boolean
     lease?: boolean | LeaseDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
 
@@ -9021,13 +9021,15 @@ export namespace Prisma {
     id?: boolean
     amountDue?: boolean
     amountPaid?: boolean
-    dueDate?: boolean
     paymentDate?: boolean
+    currency?: boolean
+    stripeSessionId?: boolean
     paymentStatus?: boolean
     leaseId?: boolean
+    createdAt?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amountDue" | "amountPaid" | "dueDate" | "paymentDate" | "paymentStatus" | "leaseId", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "amountDue" | "amountPaid" | "paymentDate" | "currency" | "stripeSessionId" | "paymentStatus" | "leaseId" | "createdAt", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     lease?: boolean | LeaseDefaultArgs<ExtArgs>
   }
@@ -9047,10 +9049,12 @@ export namespace Prisma {
       id: number
       amountDue: number
       amountPaid: number
-      dueDate: Date
       paymentDate: Date
+      currency: string
+      stripeSessionId: string
       paymentStatus: $Enums.PaymentStatus
       leaseId: number
+      createdAt: Date
     }, ExtArgs["result"]["payment"]>
     composites: {}
   }
@@ -9478,10 +9482,12 @@ export namespace Prisma {
     readonly id: FieldRef<"Payment", 'Int'>
     readonly amountDue: FieldRef<"Payment", 'Float'>
     readonly amountPaid: FieldRef<"Payment", 'Float'>
-    readonly dueDate: FieldRef<"Payment", 'DateTime'>
     readonly paymentDate: FieldRef<"Payment", 'DateTime'>
+    readonly currency: FieldRef<"Payment", 'String'>
+    readonly stripeSessionId: FieldRef<"Payment", 'String'>
     readonly paymentStatus: FieldRef<"Payment", 'PaymentStatus'>
     readonly leaseId: FieldRef<"Payment", 'Int'>
+    readonly createdAt: FieldRef<"Payment", 'DateTime'>
   }
     
 
@@ -9979,8 +9985,7 @@ export namespace Prisma {
     name: 'name',
     email: 'email',
     phoneNumber: 'phoneNumber',
-    message: 'message',
-    leaseId: 'leaseId'
+    message: 'message'
   };
 
   export type ApplicationScalarFieldEnum = (typeof ApplicationScalarFieldEnum)[keyof typeof ApplicationScalarFieldEnum]
@@ -9993,7 +9998,8 @@ export namespace Prisma {
     rent: 'rent',
     deposit: 'deposit',
     propertyId: 'propertyId',
-    tenantCognitoId: 'tenantCognitoId'
+    tenantCognitoId: 'tenantCognitoId',
+    applicationId: 'applicationId'
   };
 
   export type LeaseScalarFieldEnum = (typeof LeaseScalarFieldEnum)[keyof typeof LeaseScalarFieldEnum]
@@ -10003,10 +10009,12 @@ export namespace Prisma {
     id: 'id',
     amountDue: 'amountDue',
     amountPaid: 'amountPaid',
-    dueDate: 'dueDate',
     paymentDate: 'paymentDate',
+    currency: 'currency',
+    stripeSessionId: 'stripeSessionId',
     paymentStatus: 'paymentStatus',
-    leaseId: 'leaseId'
+    leaseId: 'leaseId',
+    createdAt: 'createdAt'
   };
 
   export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
@@ -10522,7 +10530,6 @@ export namespace Prisma {
     email?: StringFilter<"Application"> | string
     phoneNumber?: StringFilter<"Application"> | string
     message?: StringNullableFilter<"Application"> | string | null
-    leaseId?: IntNullableFilter<"Application"> | number | null
     property?: XOR<PropertyScalarRelationFilter, PropertyWhereInput>
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
     lease?: XOR<LeaseNullableScalarRelationFilter, LeaseWhereInput> | null
@@ -10538,7 +10545,6 @@ export namespace Prisma {
     email?: SortOrder
     phoneNumber?: SortOrder
     message?: SortOrderInput | SortOrder
-    leaseId?: SortOrderInput | SortOrder
     property?: PropertyOrderByWithRelationInput
     tenant?: TenantOrderByWithRelationInput
     lease?: LeaseOrderByWithRelationInput
@@ -10546,7 +10552,6 @@ export namespace Prisma {
 
   export type ApplicationWhereUniqueInput = Prisma.AtLeast<{
     id?: number
-    leaseId?: number
     AND?: ApplicationWhereInput | ApplicationWhereInput[]
     OR?: ApplicationWhereInput[]
     NOT?: ApplicationWhereInput | ApplicationWhereInput[]
@@ -10561,7 +10566,7 @@ export namespace Prisma {
     property?: XOR<PropertyScalarRelationFilter, PropertyWhereInput>
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
     lease?: XOR<LeaseNullableScalarRelationFilter, LeaseWhereInput> | null
-  }, "id" | "leaseId">
+  }, "id">
 
   export type ApplicationOrderByWithAggregationInput = {
     id?: SortOrder
@@ -10573,7 +10578,6 @@ export namespace Prisma {
     email?: SortOrder
     phoneNumber?: SortOrder
     message?: SortOrderInput | SortOrder
-    leaseId?: SortOrderInput | SortOrder
     _count?: ApplicationCountOrderByAggregateInput
     _avg?: ApplicationAvgOrderByAggregateInput
     _max?: ApplicationMaxOrderByAggregateInput
@@ -10594,7 +10598,6 @@ export namespace Prisma {
     email?: StringWithAggregatesFilter<"Application"> | string
     phoneNumber?: StringWithAggregatesFilter<"Application"> | string
     message?: StringNullableWithAggregatesFilter<"Application"> | string | null
-    leaseId?: IntNullableWithAggregatesFilter<"Application"> | number | null
   }
 
   export type LeaseWhereInput = {
@@ -10608,9 +10611,10 @@ export namespace Prisma {
     deposit?: FloatFilter<"Lease"> | number
     propertyId?: IntFilter<"Lease"> | number
     tenantCognitoId?: StringFilter<"Lease"> | string
+    applicationId?: IntFilter<"Lease"> | number
     property?: XOR<PropertyScalarRelationFilter, PropertyWhereInput>
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
-    application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    application?: XOR<ApplicationScalarRelationFilter, ApplicationWhereInput>
     payments?: PaymentListRelationFilter
   }
 
@@ -10622,6 +10626,7 @@ export namespace Prisma {
     deposit?: SortOrder
     propertyId?: SortOrder
     tenantCognitoId?: SortOrder
+    applicationId?: SortOrder
     property?: PropertyOrderByWithRelationInput
     tenant?: TenantOrderByWithRelationInput
     application?: ApplicationOrderByWithRelationInput
@@ -10630,6 +10635,7 @@ export namespace Prisma {
 
   export type LeaseWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    applicationId?: number
     AND?: LeaseWhereInput | LeaseWhereInput[]
     OR?: LeaseWhereInput[]
     NOT?: LeaseWhereInput | LeaseWhereInput[]
@@ -10641,9 +10647,9 @@ export namespace Prisma {
     tenantCognitoId?: StringFilter<"Lease"> | string
     property?: XOR<PropertyScalarRelationFilter, PropertyWhereInput>
     tenant?: XOR<TenantScalarRelationFilter, TenantWhereInput>
-    application?: XOR<ApplicationNullableScalarRelationFilter, ApplicationWhereInput> | null
+    application?: XOR<ApplicationScalarRelationFilter, ApplicationWhereInput>
     payments?: PaymentListRelationFilter
-  }, "id">
+  }, "id" | "applicationId">
 
   export type LeaseOrderByWithAggregationInput = {
     id?: SortOrder
@@ -10653,6 +10659,7 @@ export namespace Prisma {
     deposit?: SortOrder
     propertyId?: SortOrder
     tenantCognitoId?: SortOrder
+    applicationId?: SortOrder
     _count?: LeaseCountOrderByAggregateInput
     _avg?: LeaseAvgOrderByAggregateInput
     _max?: LeaseMaxOrderByAggregateInput
@@ -10671,6 +10678,7 @@ export namespace Prisma {
     deposit?: FloatWithAggregatesFilter<"Lease"> | number
     propertyId?: IntWithAggregatesFilter<"Lease"> | number
     tenantCognitoId?: StringWithAggregatesFilter<"Lease"> | string
+    applicationId?: IntWithAggregatesFilter<"Lease"> | number
   }
 
   export type PaymentWhereInput = {
@@ -10680,10 +10688,12 @@ export namespace Prisma {
     id?: IntFilter<"Payment"> | number
     amountDue?: FloatFilter<"Payment"> | number
     amountPaid?: FloatFilter<"Payment"> | number
-    dueDate?: DateTimeFilter<"Payment"> | Date | string
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
+    currency?: StringFilter<"Payment"> | string
+    stripeSessionId?: StringFilter<"Payment"> | string
     paymentStatus?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     leaseId?: IntFilter<"Payment"> | number
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
     lease?: XOR<LeaseScalarRelationFilter, LeaseWhereInput>
   }
 
@@ -10691,35 +10701,41 @@ export namespace Prisma {
     id?: SortOrder
     amountDue?: SortOrder
     amountPaid?: SortOrder
-    dueDate?: SortOrder
     paymentDate?: SortOrder
+    currency?: SortOrder
+    stripeSessionId?: SortOrder
     paymentStatus?: SortOrder
     leaseId?: SortOrder
+    createdAt?: SortOrder
     lease?: LeaseOrderByWithRelationInput
   }
 
   export type PaymentWhereUniqueInput = Prisma.AtLeast<{
     id?: number
+    stripeSessionId?: string
     AND?: PaymentWhereInput | PaymentWhereInput[]
     OR?: PaymentWhereInput[]
     NOT?: PaymentWhereInput | PaymentWhereInput[]
     amountDue?: FloatFilter<"Payment"> | number
     amountPaid?: FloatFilter<"Payment"> | number
-    dueDate?: DateTimeFilter<"Payment"> | Date | string
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
+    currency?: StringFilter<"Payment"> | string
     paymentStatus?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     leaseId?: IntFilter<"Payment"> | number
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
     lease?: XOR<LeaseScalarRelationFilter, LeaseWhereInput>
-  }, "id">
+  }, "id" | "stripeSessionId">
 
   export type PaymentOrderByWithAggregationInput = {
     id?: SortOrder
     amountDue?: SortOrder
     amountPaid?: SortOrder
-    dueDate?: SortOrder
     paymentDate?: SortOrder
+    currency?: SortOrder
+    stripeSessionId?: SortOrder
     paymentStatus?: SortOrder
     leaseId?: SortOrder
+    createdAt?: SortOrder
     _count?: PaymentCountOrderByAggregateInput
     _avg?: PaymentAvgOrderByAggregateInput
     _max?: PaymentMaxOrderByAggregateInput
@@ -10734,10 +10750,12 @@ export namespace Prisma {
     id?: IntWithAggregatesFilter<"Payment"> | number
     amountDue?: FloatWithAggregatesFilter<"Payment"> | number
     amountPaid?: FloatWithAggregatesFilter<"Payment"> | number
-    dueDate?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
     paymentDate?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
+    currency?: StringWithAggregatesFilter<"Payment"> | string
+    stripeSessionId?: StringWithAggregatesFilter<"Payment"> | string
     paymentStatus?: EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
     leaseId?: IntWithAggregatesFilter<"Payment"> | number
+    createdAt?: DateTimeWithAggregatesFilter<"Payment"> | Date | string
   }
 
   export type PropertyCreateInput = {
@@ -11096,7 +11114,7 @@ export namespace Prisma {
     email: string
     phoneNumber: string
     message?: string | null
-    leaseId?: number | null
+    lease?: LeaseUncheckedCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationUpdateInput = {
@@ -11121,7 +11139,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
-    leaseId?: NullableIntFieldUpdateOperationsInput | number | null
+    lease?: LeaseUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationCreateManyInput = {
@@ -11134,7 +11152,6 @@ export namespace Prisma {
     email: string
     phoneNumber: string
     message?: string | null
-    leaseId?: number | null
   }
 
   export type ApplicationUpdateManyMutationInput = {
@@ -11156,7 +11173,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
-    leaseId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type LeaseCreateInput = {
@@ -11166,7 +11182,7 @@ export namespace Prisma {
     deposit: number
     property: PropertyCreateNestedOneWithoutLeasesInput
     tenant: TenantCreateNestedOneWithoutLeasesInput
-    application?: ApplicationCreateNestedOneWithoutLeaseInput
+    application: ApplicationCreateNestedOneWithoutLeaseInput
     payments?: PaymentCreateNestedManyWithoutLeaseInput
   }
 
@@ -11178,7 +11194,7 @@ export namespace Prisma {
     deposit: number
     propertyId: number
     tenantCognitoId: string
-    application?: ApplicationUncheckedCreateNestedOneWithoutLeaseInput
+    applicationId: number
     payments?: PaymentUncheckedCreateNestedManyWithoutLeaseInput
   }
 
@@ -11189,7 +11205,7 @@ export namespace Prisma {
     deposit?: FloatFieldUpdateOperationsInput | number
     property?: PropertyUpdateOneRequiredWithoutLeasesNestedInput
     tenant?: TenantUpdateOneRequiredWithoutLeasesNestedInput
-    application?: ApplicationUpdateOneWithoutLeaseNestedInput
+    application?: ApplicationUpdateOneRequiredWithoutLeaseNestedInput
     payments?: PaymentUpdateManyWithoutLeaseNestedInput
   }
 
@@ -11201,7 +11217,7 @@ export namespace Prisma {
     deposit?: FloatFieldUpdateOperationsInput | number
     propertyId?: IntFieldUpdateOperationsInput | number
     tenantCognitoId?: StringFieldUpdateOperationsInput | string
-    application?: ApplicationUncheckedUpdateOneWithoutLeaseNestedInput
+    applicationId?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUncheckedUpdateManyWithoutLeaseNestedInput
   }
 
@@ -11213,6 +11229,7 @@ export namespace Prisma {
     deposit: number
     propertyId: number
     tenantCognitoId: string
+    applicationId: number
   }
 
   export type LeaseUpdateManyMutationInput = {
@@ -11230,33 +11247,40 @@ export namespace Prisma {
     deposit?: FloatFieldUpdateOperationsInput | number
     propertyId?: IntFieldUpdateOperationsInput | number
     tenantCognitoId?: StringFieldUpdateOperationsInput | string
+    applicationId?: IntFieldUpdateOperationsInput | number
   }
 
   export type PaymentCreateInput = {
-    amountDue: number
+    amountDue?: number
     amountPaid: number
-    dueDate: Date | string
     paymentDate: Date | string
+    currency: string
+    stripeSessionId: string
     paymentStatus: $Enums.PaymentStatus
+    createdAt?: Date | string
     lease: LeaseCreateNestedOneWithoutPaymentsInput
   }
 
   export type PaymentUncheckedCreateInput = {
     id?: number
-    amountDue: number
+    amountDue?: number
     amountPaid: number
-    dueDate: Date | string
     paymentDate: Date | string
+    currency: string
+    stripeSessionId: string
     paymentStatus: $Enums.PaymentStatus
     leaseId: number
+    createdAt?: Date | string
   }
 
   export type PaymentUpdateInput = {
     amountDue?: FloatFieldUpdateOperationsInput | number
     amountPaid?: FloatFieldUpdateOperationsInput | number
-    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    currency?: StringFieldUpdateOperationsInput | string
+    stripeSessionId?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     lease?: LeaseUpdateOneRequiredWithoutPaymentsNestedInput
   }
 
@@ -11264,38 +11288,46 @@ export namespace Prisma {
     id?: IntFieldUpdateOperationsInput | number
     amountDue?: FloatFieldUpdateOperationsInput | number
     amountPaid?: FloatFieldUpdateOperationsInput | number
-    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    currency?: StringFieldUpdateOperationsInput | string
+    stripeSessionId?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     leaseId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PaymentCreateManyInput = {
     id?: number
-    amountDue: number
+    amountDue?: number
     amountPaid: number
-    dueDate: Date | string
     paymentDate: Date | string
+    currency: string
+    stripeSessionId: string
     paymentStatus: $Enums.PaymentStatus
     leaseId: number
+    createdAt?: Date | string
   }
 
   export type PaymentUpdateManyMutationInput = {
     amountDue?: FloatFieldUpdateOperationsInput | number
     amountPaid?: FloatFieldUpdateOperationsInput | number
-    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    currency?: StringFieldUpdateOperationsInput | string
+    stripeSessionId?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PaymentUncheckedUpdateManyInput = {
     id?: IntFieldUpdateOperationsInput | number
     amountDue?: FloatFieldUpdateOperationsInput | number
     amountPaid?: FloatFieldUpdateOperationsInput | number
-    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    currency?: StringFieldUpdateOperationsInput | string
+    stripeSessionId?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
     leaseId?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type IntFilter<$PrismaModel = never> = {
@@ -11808,13 +11840,11 @@ export namespace Prisma {
     email?: SortOrder
     phoneNumber?: SortOrder
     message?: SortOrder
-    leaseId?: SortOrder
   }
 
   export type ApplicationAvgOrderByAggregateInput = {
     id?: SortOrder
     propertyId?: SortOrder
-    leaseId?: SortOrder
   }
 
   export type ApplicationMaxOrderByAggregateInput = {
@@ -11827,7 +11857,6 @@ export namespace Prisma {
     email?: SortOrder
     phoneNumber?: SortOrder
     message?: SortOrder
-    leaseId?: SortOrder
   }
 
   export type ApplicationMinOrderByAggregateInput = {
@@ -11840,13 +11869,11 @@ export namespace Prisma {
     email?: SortOrder
     phoneNumber?: SortOrder
     message?: SortOrder
-    leaseId?: SortOrder
   }
 
   export type ApplicationSumOrderByAggregateInput = {
     id?: SortOrder
     propertyId?: SortOrder
-    leaseId?: SortOrder
   }
 
   export type EnumApplicationStatusWithAggregatesFilter<$PrismaModel = never> = {
@@ -11877,9 +11904,9 @@ export namespace Prisma {
     _max?: NestedStringNullableFilter<$PrismaModel>
   }
 
-  export type ApplicationNullableScalarRelationFilter = {
-    is?: ApplicationWhereInput | null
-    isNot?: ApplicationWhereInput | null
+  export type ApplicationScalarRelationFilter = {
+    is?: ApplicationWhereInput
+    isNot?: ApplicationWhereInput
   }
 
   export type PaymentListRelationFilter = {
@@ -11900,6 +11927,7 @@ export namespace Prisma {
     deposit?: SortOrder
     propertyId?: SortOrder
     tenantCognitoId?: SortOrder
+    applicationId?: SortOrder
   }
 
   export type LeaseAvgOrderByAggregateInput = {
@@ -11907,6 +11935,7 @@ export namespace Prisma {
     rent?: SortOrder
     deposit?: SortOrder
     propertyId?: SortOrder
+    applicationId?: SortOrder
   }
 
   export type LeaseMaxOrderByAggregateInput = {
@@ -11917,6 +11946,7 @@ export namespace Prisma {
     deposit?: SortOrder
     propertyId?: SortOrder
     tenantCognitoId?: SortOrder
+    applicationId?: SortOrder
   }
 
   export type LeaseMinOrderByAggregateInput = {
@@ -11927,6 +11957,7 @@ export namespace Prisma {
     deposit?: SortOrder
     propertyId?: SortOrder
     tenantCognitoId?: SortOrder
+    applicationId?: SortOrder
   }
 
   export type LeaseSumOrderByAggregateInput = {
@@ -11934,6 +11965,7 @@ export namespace Prisma {
     rent?: SortOrder
     deposit?: SortOrder
     propertyId?: SortOrder
+    applicationId?: SortOrder
   }
 
   export type EnumPaymentStatusFilter<$PrismaModel = never> = {
@@ -11952,10 +11984,12 @@ export namespace Prisma {
     id?: SortOrder
     amountDue?: SortOrder
     amountPaid?: SortOrder
-    dueDate?: SortOrder
     paymentDate?: SortOrder
+    currency?: SortOrder
+    stripeSessionId?: SortOrder
     paymentStatus?: SortOrder
     leaseId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type PaymentAvgOrderByAggregateInput = {
@@ -11969,20 +12003,24 @@ export namespace Prisma {
     id?: SortOrder
     amountDue?: SortOrder
     amountPaid?: SortOrder
-    dueDate?: SortOrder
     paymentDate?: SortOrder
+    currency?: SortOrder
+    stripeSessionId?: SortOrder
     paymentStatus?: SortOrder
     leaseId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type PaymentMinOrderByAggregateInput = {
     id?: SortOrder
     amountDue?: SortOrder
     amountPaid?: SortOrder
-    dueDate?: SortOrder
     paymentDate?: SortOrder
+    currency?: SortOrder
+    stripeSessionId?: SortOrder
     paymentStatus?: SortOrder
     leaseId?: SortOrder
+    createdAt?: SortOrder
   }
 
   export type PaymentSumOrderByAggregateInput = {
@@ -12508,6 +12546,12 @@ export namespace Prisma {
     connect?: LeaseWhereUniqueInput
   }
 
+  export type LeaseUncheckedCreateNestedOneWithoutApplicationInput = {
+    create?: XOR<LeaseCreateWithoutApplicationInput, LeaseUncheckedCreateWithoutApplicationInput>
+    connectOrCreate?: LeaseCreateOrConnectWithoutApplicationInput
+    connect?: LeaseWhereUniqueInput
+  }
+
   export type EnumApplicationStatusFieldUpdateOperationsInput = {
     set?: $Enums.ApplicationStatus
   }
@@ -12542,6 +12586,16 @@ export namespace Prisma {
     update?: XOR<XOR<LeaseUpdateToOneWithWhereWithoutApplicationInput, LeaseUpdateWithoutApplicationInput>, LeaseUncheckedUpdateWithoutApplicationInput>
   }
 
+  export type LeaseUncheckedUpdateOneWithoutApplicationNestedInput = {
+    create?: XOR<LeaseCreateWithoutApplicationInput, LeaseUncheckedCreateWithoutApplicationInput>
+    connectOrCreate?: LeaseCreateOrConnectWithoutApplicationInput
+    upsert?: LeaseUpsertWithoutApplicationInput
+    disconnect?: LeaseWhereInput | boolean
+    delete?: LeaseWhereInput | boolean
+    connect?: LeaseWhereUniqueInput
+    update?: XOR<XOR<LeaseUpdateToOneWithWhereWithoutApplicationInput, LeaseUpdateWithoutApplicationInput>, LeaseUncheckedUpdateWithoutApplicationInput>
+  }
+
   export type PropertyCreateNestedOneWithoutLeasesInput = {
     create?: XOR<PropertyCreateWithoutLeasesInput, PropertyUncheckedCreateWithoutLeasesInput>
     connectOrCreate?: PropertyCreateOrConnectWithoutLeasesInput
@@ -12567,12 +12621,6 @@ export namespace Prisma {
     connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
   }
 
-  export type ApplicationUncheckedCreateNestedOneWithoutLeaseInput = {
-    create?: XOR<ApplicationCreateWithoutLeaseInput, ApplicationUncheckedCreateWithoutLeaseInput>
-    connectOrCreate?: ApplicationCreateOrConnectWithoutLeaseInput
-    connect?: ApplicationWhereUniqueInput
-  }
-
   export type PaymentUncheckedCreateNestedManyWithoutLeaseInput = {
     create?: XOR<PaymentCreateWithoutLeaseInput, PaymentUncheckedCreateWithoutLeaseInput> | PaymentCreateWithoutLeaseInput[] | PaymentUncheckedCreateWithoutLeaseInput[]
     connectOrCreate?: PaymentCreateOrConnectWithoutLeaseInput | PaymentCreateOrConnectWithoutLeaseInput[]
@@ -12596,12 +12644,10 @@ export namespace Prisma {
     update?: XOR<XOR<TenantUpdateToOneWithWhereWithoutLeasesInput, TenantUpdateWithoutLeasesInput>, TenantUncheckedUpdateWithoutLeasesInput>
   }
 
-  export type ApplicationUpdateOneWithoutLeaseNestedInput = {
+  export type ApplicationUpdateOneRequiredWithoutLeaseNestedInput = {
     create?: XOR<ApplicationCreateWithoutLeaseInput, ApplicationUncheckedCreateWithoutLeaseInput>
     connectOrCreate?: ApplicationCreateOrConnectWithoutLeaseInput
     upsert?: ApplicationUpsertWithoutLeaseInput
-    disconnect?: ApplicationWhereInput | boolean
-    delete?: ApplicationWhereInput | boolean
     connect?: ApplicationWhereUniqueInput
     update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutLeaseInput, ApplicationUpdateWithoutLeaseInput>, ApplicationUncheckedUpdateWithoutLeaseInput>
   }
@@ -12618,16 +12664,6 @@ export namespace Prisma {
     update?: PaymentUpdateWithWhereUniqueWithoutLeaseInput | PaymentUpdateWithWhereUniqueWithoutLeaseInput[]
     updateMany?: PaymentUpdateManyWithWhereWithoutLeaseInput | PaymentUpdateManyWithWhereWithoutLeaseInput[]
     deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
-  }
-
-  export type ApplicationUncheckedUpdateOneWithoutLeaseNestedInput = {
-    create?: XOR<ApplicationCreateWithoutLeaseInput, ApplicationUncheckedCreateWithoutLeaseInput>
-    connectOrCreate?: ApplicationCreateOrConnectWithoutLeaseInput
-    upsert?: ApplicationUpsertWithoutLeaseInput
-    disconnect?: ApplicationWhereInput | boolean
-    delete?: ApplicationWhereInput | boolean
-    connect?: ApplicationWhereUniqueInput
-    update?: XOR<XOR<ApplicationUpdateToOneWithWhereWithoutLeaseInput, ApplicationUpdateWithoutLeaseInput>, ApplicationUncheckedUpdateWithoutLeaseInput>
   }
 
   export type PaymentUncheckedUpdateManyWithoutLeaseNestedInput = {
@@ -12947,7 +12983,7 @@ export namespace Prisma {
     rent: number
     deposit: number
     tenant: TenantCreateNestedOneWithoutLeasesInput
-    application?: ApplicationCreateNestedOneWithoutLeaseInput
+    application: ApplicationCreateNestedOneWithoutLeaseInput
     payments?: PaymentCreateNestedManyWithoutLeaseInput
   }
 
@@ -12958,7 +12994,7 @@ export namespace Prisma {
     rent: number
     deposit: number
     tenantCognitoId: string
-    application?: ApplicationUncheckedCreateNestedOneWithoutLeaseInput
+    applicationId: number
     payments?: PaymentUncheckedCreateNestedManyWithoutLeaseInput
   }
 
@@ -12992,7 +13028,7 @@ export namespace Prisma {
     email: string
     phoneNumber: string
     message?: string | null
-    leaseId?: number | null
+    lease?: LeaseUncheckedCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationCreateOrConnectWithoutPropertyInput = {
@@ -13132,6 +13168,7 @@ export namespace Prisma {
     deposit?: FloatFilter<"Lease"> | number
     propertyId?: IntFilter<"Lease"> | number
     tenantCognitoId?: StringFilter<"Lease"> | string
+    applicationId?: IntFilter<"Lease"> | number
   }
 
   export type ApplicationUpsertWithWhereUniqueWithoutPropertyInput = {
@@ -13163,7 +13200,6 @@ export namespace Prisma {
     email?: StringFilter<"Application"> | string
     phoneNumber?: StringFilter<"Application"> | string
     message?: StringNullableFilter<"Application"> | string | null
-    leaseId?: IntNullableFilter<"Application"> | number | null
   }
 
   export type TenantUpsertWithWhereUniqueWithoutFavoritesInput = {
@@ -13444,7 +13480,7 @@ export namespace Prisma {
     email: string
     phoneNumber: string
     message?: string | null
-    leaseId?: number | null
+    lease?: LeaseUncheckedCreateNestedOneWithoutApplicationInput
   }
 
   export type ApplicationCreateOrConnectWithoutTenantInput = {
@@ -13463,7 +13499,7 @@ export namespace Prisma {
     rent: number
     deposit: number
     property: PropertyCreateNestedOneWithoutLeasesInput
-    application?: ApplicationCreateNestedOneWithoutLeaseInput
+    application: ApplicationCreateNestedOneWithoutLeaseInput
     payments?: PaymentCreateNestedManyWithoutLeaseInput
   }
 
@@ -13474,7 +13510,7 @@ export namespace Prisma {
     rent: number
     deposit: number
     propertyId: number
-    application?: ApplicationUncheckedCreateNestedOneWithoutLeaseInput
+    applicationId: number
     payments?: PaymentUncheckedCreateNestedManyWithoutLeaseInput
   }
 
@@ -13974,20 +14010,24 @@ export namespace Prisma {
   }
 
   export type PaymentCreateWithoutLeaseInput = {
-    amountDue: number
+    amountDue?: number
     amountPaid: number
-    dueDate: Date | string
     paymentDate: Date | string
+    currency: string
+    stripeSessionId: string
     paymentStatus: $Enums.PaymentStatus
+    createdAt?: Date | string
   }
 
   export type PaymentUncheckedCreateWithoutLeaseInput = {
     id?: number
-    amountDue: number
+    amountDue?: number
     amountPaid: number
-    dueDate: Date | string
     paymentDate: Date | string
+    currency: string
+    stripeSessionId: string
     paymentStatus: $Enums.PaymentStatus
+    createdAt?: Date | string
   }
 
   export type PaymentCreateOrConnectWithoutLeaseInput = {
@@ -14151,10 +14191,12 @@ export namespace Prisma {
     id?: IntFilter<"Payment"> | number
     amountDue?: FloatFilter<"Payment"> | number
     amountPaid?: FloatFilter<"Payment"> | number
-    dueDate?: DateTimeFilter<"Payment"> | Date | string
     paymentDate?: DateTimeFilter<"Payment"> | Date | string
+    currency?: StringFilter<"Payment"> | string
+    stripeSessionId?: StringFilter<"Payment"> | string
     paymentStatus?: EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
     leaseId?: IntFilter<"Payment"> | number
+    createdAt?: DateTimeFilter<"Payment"> | Date | string
   }
 
   export type LeaseCreateWithoutPaymentsInput = {
@@ -14164,7 +14206,7 @@ export namespace Prisma {
     deposit: number
     property: PropertyCreateNestedOneWithoutLeasesInput
     tenant: TenantCreateNestedOneWithoutLeasesInput
-    application?: ApplicationCreateNestedOneWithoutLeaseInput
+    application: ApplicationCreateNestedOneWithoutLeaseInput
   }
 
   export type LeaseUncheckedCreateWithoutPaymentsInput = {
@@ -14175,7 +14217,7 @@ export namespace Prisma {
     deposit: number
     propertyId: number
     tenantCognitoId: string
-    application?: ApplicationUncheckedCreateNestedOneWithoutLeaseInput
+    applicationId: number
   }
 
   export type LeaseCreateOrConnectWithoutPaymentsInput = {
@@ -14201,7 +14243,7 @@ export namespace Prisma {
     deposit?: FloatFieldUpdateOperationsInput | number
     property?: PropertyUpdateOneRequiredWithoutLeasesNestedInput
     tenant?: TenantUpdateOneRequiredWithoutLeasesNestedInput
-    application?: ApplicationUpdateOneWithoutLeaseNestedInput
+    application?: ApplicationUpdateOneRequiredWithoutLeaseNestedInput
   }
 
   export type LeaseUncheckedUpdateWithoutPaymentsInput = {
@@ -14212,7 +14254,7 @@ export namespace Prisma {
     deposit?: FloatFieldUpdateOperationsInput | number
     propertyId?: IntFieldUpdateOperationsInput | number
     tenantCognitoId?: StringFieldUpdateOperationsInput | string
-    application?: ApplicationUncheckedUpdateOneWithoutLeaseNestedInput
+    applicationId?: IntFieldUpdateOperationsInput | number
   }
 
   export type LeaseCreateManyPropertyInput = {
@@ -14222,6 +14264,7 @@ export namespace Prisma {
     rent: number
     deposit: number
     tenantCognitoId: string
+    applicationId: number
   }
 
   export type ApplicationCreateManyPropertyInput = {
@@ -14233,7 +14276,6 @@ export namespace Prisma {
     email: string
     phoneNumber: string
     message?: string | null
-    leaseId?: number | null
   }
 
   export type LeaseUpdateWithoutPropertyInput = {
@@ -14242,7 +14284,7 @@ export namespace Prisma {
     rent?: FloatFieldUpdateOperationsInput | number
     deposit?: FloatFieldUpdateOperationsInput | number
     tenant?: TenantUpdateOneRequiredWithoutLeasesNestedInput
-    application?: ApplicationUpdateOneWithoutLeaseNestedInput
+    application?: ApplicationUpdateOneRequiredWithoutLeaseNestedInput
     payments?: PaymentUpdateManyWithoutLeaseNestedInput
   }
 
@@ -14253,7 +14295,7 @@ export namespace Prisma {
     rent?: FloatFieldUpdateOperationsInput | number
     deposit?: FloatFieldUpdateOperationsInput | number
     tenantCognitoId?: StringFieldUpdateOperationsInput | string
-    application?: ApplicationUncheckedUpdateOneWithoutLeaseNestedInput
+    applicationId?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUncheckedUpdateManyWithoutLeaseNestedInput
   }
 
@@ -14264,6 +14306,7 @@ export namespace Prisma {
     rent?: FloatFieldUpdateOperationsInput | number
     deposit?: FloatFieldUpdateOperationsInput | number
     tenantCognitoId?: StringFieldUpdateOperationsInput | string
+    applicationId?: IntFieldUpdateOperationsInput | number
   }
 
   export type ApplicationUpdateWithoutPropertyInput = {
@@ -14286,7 +14329,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
-    leaseId?: NullableIntFieldUpdateOperationsInput | number | null
+    lease?: LeaseUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateManyWithoutPropertyInput = {
@@ -14298,7 +14341,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
-    leaseId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type TenantUpdateWithoutFavoritesInput = {
@@ -14463,7 +14505,6 @@ export namespace Prisma {
     email: string
     phoneNumber: string
     message?: string | null
-    leaseId?: number | null
   }
 
   export type LeaseCreateManyTenantInput = {
@@ -14473,6 +14514,7 @@ export namespace Prisma {
     rent: number
     deposit: number
     propertyId: number
+    applicationId: number
   }
 
   export type PropertyUpdateWithoutTenantsInput = {
@@ -14643,7 +14685,7 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
-    leaseId?: NullableIntFieldUpdateOperationsInput | number | null
+    lease?: LeaseUncheckedUpdateOneWithoutApplicationNestedInput
   }
 
   export type ApplicationUncheckedUpdateManyWithoutTenantInput = {
@@ -14655,7 +14697,6 @@ export namespace Prisma {
     email?: StringFieldUpdateOperationsInput | string
     phoneNumber?: StringFieldUpdateOperationsInput | string
     message?: NullableStringFieldUpdateOperationsInput | string | null
-    leaseId?: NullableIntFieldUpdateOperationsInput | number | null
   }
 
   export type LeaseUpdateWithoutTenantInput = {
@@ -14664,7 +14705,7 @@ export namespace Prisma {
     rent?: FloatFieldUpdateOperationsInput | number
     deposit?: FloatFieldUpdateOperationsInput | number
     property?: PropertyUpdateOneRequiredWithoutLeasesNestedInput
-    application?: ApplicationUpdateOneWithoutLeaseNestedInput
+    application?: ApplicationUpdateOneRequiredWithoutLeaseNestedInput
     payments?: PaymentUpdateManyWithoutLeaseNestedInput
   }
 
@@ -14675,7 +14716,7 @@ export namespace Prisma {
     rent?: FloatFieldUpdateOperationsInput | number
     deposit?: FloatFieldUpdateOperationsInput | number
     propertyId?: IntFieldUpdateOperationsInput | number
-    application?: ApplicationUncheckedUpdateOneWithoutLeaseNestedInput
+    applicationId?: IntFieldUpdateOperationsInput | number
     payments?: PaymentUncheckedUpdateManyWithoutLeaseNestedInput
   }
 
@@ -14686,6 +14727,7 @@ export namespace Prisma {
     rent?: FloatFieldUpdateOperationsInput | number
     deposit?: FloatFieldUpdateOperationsInput | number
     propertyId?: IntFieldUpdateOperationsInput | number
+    applicationId?: IntFieldUpdateOperationsInput | number
   }
 
   export type PropertyUpdateWithoutLocationInput = {
@@ -14785,37 +14827,45 @@ export namespace Prisma {
 
   export type PaymentCreateManyLeaseInput = {
     id?: number
-    amountDue: number
+    amountDue?: number
     amountPaid: number
-    dueDate: Date | string
     paymentDate: Date | string
+    currency: string
+    stripeSessionId: string
     paymentStatus: $Enums.PaymentStatus
+    createdAt?: Date | string
   }
 
   export type PaymentUpdateWithoutLeaseInput = {
     amountDue?: FloatFieldUpdateOperationsInput | number
     amountPaid?: FloatFieldUpdateOperationsInput | number
-    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    currency?: StringFieldUpdateOperationsInput | string
+    stripeSessionId?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PaymentUncheckedUpdateWithoutLeaseInput = {
     id?: IntFieldUpdateOperationsInput | number
     amountDue?: FloatFieldUpdateOperationsInput | number
     amountPaid?: FloatFieldUpdateOperationsInput | number
-    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    currency?: StringFieldUpdateOperationsInput | string
+    stripeSessionId?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type PaymentUncheckedUpdateManyWithoutLeaseInput = {
     id?: IntFieldUpdateOperationsInput | number
     amountDue?: FloatFieldUpdateOperationsInput | number
     amountPaid?: FloatFieldUpdateOperationsInput | number
-    dueDate?: DateTimeFieldUpdateOperationsInput | Date | string
     paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    currency?: StringFieldUpdateOperationsInput | string
+    stripeSessionId?: StringFieldUpdateOperationsInput | string
     paymentStatus?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
 

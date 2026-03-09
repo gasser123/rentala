@@ -11,16 +11,18 @@ import { leaseRoutes } from "./routes/lease-routes";
 import { applicationRoutes } from "./routes/application-routes";
 import { paymentRoutes } from "./routes/payment-routes";
 import path from "node:path";
+import { handleWebhook } from "./controllers/payment-controller";
 
 /* Configurations */
 dotenv.config();
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(morgan("common"));
 app.use(cors());
+app.post("/webhook", express.raw({ type: "application/json" }), handleWebhook);
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 if (process.env.NODE_ENV !== "production") {
   app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 }

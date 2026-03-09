@@ -1,26 +1,24 @@
-import Checkout from "@/components/checkout/Checkout";
 import { fetchAuthSession } from "aws-amplify/auth";
 import { notFound } from "next/navigation";
 
-const CheckoutPage = async ({
+const CheckoutReturnPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
-  const { applicationId } = await searchParams;
-  if (!applicationId) {
+  const { session_id } = await searchParams;
+
+  if (!session_id) {
     notFound();
   }
-  const ApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/create-checkout-session?applicationId=${applicationId}`;
+  const ApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/session-status?sessionId=${session_id}`;
   const session = await fetchAuthSession();
   const { idToken } = session.tokens ?? {};
   if (!idToken) {
-    return <div>401 Unauthorized</div>;
+    return <h2>401 Unauthorized</h2>;
   }
   const response = await fetch(ApiUrl, {
-    method: "POST",
     headers: {
-      "Content-Type": "application/json",
       Authorization: `Bearer ${idToken}`,
     },
     cache: "no-store",
@@ -35,7 +33,21 @@ const CheckoutPage = async ({
     );
   }
 
-  return <Checkout clientSecret={data.clientSecret} />;
+  const { status } = data;
+  if (status === "open") {
+    return <h2 className="text-center">Payment Failed</h2>;
+  }
+
+  if (status === "complete") {
+    return (
+      <section id="success">
+        <p>
+          We appreciate your business! A confirmation email will be sent to you.
+          If you have any questions, please email{" "}
+        </p>
+      </section>
+    );
+  }
 };
 
-export default CheckoutPage;
+export default CheckoutReturnPage;

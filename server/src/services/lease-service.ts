@@ -1,4 +1,4 @@
-import { Lease, PrismaClient } from "@prisma/client";
+import { Lease, Payment, PrismaClient } from "@prisma/client";
 
 export class LeaseService {
   constructor(private prisma: PrismaClient) {}
@@ -65,10 +65,18 @@ export class LeaseService {
     }
   }
 
-  async create(leaseInfo: Omit<Lease, "id">) {
+  async createLeaseWithPayment(
+    leaseInfo: Omit<Lease, "id">,
+    paymentInfo: Omit<Payment, "id">,
+  ) {
     try {
       const lease = await this.prisma.lease.create({
-        data: leaseInfo,
+        data: {
+          ...leaseInfo,
+          payments: {
+            create: { ...paymentInfo },
+          },
+        },
       });
       return lease;
     } catch (error) {

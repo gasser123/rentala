@@ -84,59 +84,30 @@ export class ApplicationService {
         tenantCognitoId,
         propertyId,
       } = createApplicationInput;
-      const newApplication = await this.prisma.$transaction(async (tx) => {
-        // Create lease first
-        const lease = await tx.lease.create({
-          data: {
-            startDate: new Date(), //today
-            endDate: new Date(
-              new Date().setFullYear(new Date().getFullYear() + 1),
-            ), // 1 year from today
-            rent: propertyInfo.pricePerMonth,
-            deposit: propertyInfo.securityDeposit,
-            property: {
-              connect: {
-                id: propertyId,
-              },
-            },
-            tenant: {
-              connect: {
-                cognitoId: tenantCognitoId,
-              },
-            },
-          },
-        });
 
-        // create the application
-        const application = await tx.application.create({
-          data: {
-            applicationDate: new Date(applicationDate),
-            status,
-            name,
-            email,
-            phoneNumber,
-            message,
-            property: {
-              connect: {
-                id: propertyId,
-              },
-            },
-            tenant: {
-              connect: { cognitoId: tenantCognitoId },
-            },
-            lease: {
-              connect: {
-                id: lease.id,
-              },
+      // create the application
+      const newApplication = await this.prisma.application.create({
+        data: {
+          applicationDate: new Date(applicationDate),
+          status,
+          name,
+          email,
+          phoneNumber,
+          message,
+          property: {
+            connect: {
+              id: propertyId,
             },
           },
-          include: {
-            property: true,
-            tenant: true,
-            lease: true,
+          tenant: {
+            connect: { cognitoId: tenantCognitoId },
           },
-        });
-        return application;
+        },
+        include: {
+          property: true,
+          tenant: true,
+          lease: true,
+        },
       });
 
       return newApplication;
@@ -175,30 +146,12 @@ export class ApplicationService {
     try {
       let updatedApplication;
       if (status === "Approved") {
-        const newLease = await this.leaseService.create({
-          startDate: new Date(),
-          endDate: new Date(
-            new Date().setFullYear(new Date().getFullYear() + 1),
-          ),
-          rent: application.property.pricePerMonth,
-          deposit: application.property.securityDeposit,
-          propertyId: application.propertyId,
-          tenantCognitoId: application.tenantCognitoId,
-        });
-        // update the property to connect to the tenant
-        await this.propertyService.connectPropertyToTenant(
-          application.propertyId,
-          application.tenantCognitoId,
-        );
-
-        // Update the application with the new lease ID
         updatedApplication = await this.prisma.application.update({
           where: {
             id: application.id,
           },
           data: {
             status,
-            leaseId: newLease.id,
           },
           include: {
             property: true,

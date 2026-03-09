@@ -5,7 +5,8 @@ import { prisma } from "../prisma";
 import { LocationService } from "../services/location-service";
 import { LeaseService } from "../services/lease-service";
 import { PropertyService } from "../services/property-service";
-const paymentService = new PaymentService();
+import Stripe from "stripe";
+const paymentService = new PaymentService(prisma);
 const propertyService = new PropertyService(
   prisma,
   new LocationService(prisma),
@@ -36,6 +37,14 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
         message: "Unauthorized to create checkout session for this application",
       });
     }
+
+    if (application.status !== "Approved") {
+      {
+        return res.status(403).json({
+          message: "Only approved applications can create checkout sessions",
+        });
+      }
+    }
     const { applicationFee, pricePerMonth, securityDeposit } =
       application.property;
     const session = await paymentService.createCheckoutSession(
@@ -45,6 +54,7 @@ export const createCheckoutSession = async (req: Request, res: Response) => {
         securityDeposit,
       },
       id,
+      Number(applicationId),
     );
     res.json({ clientSecret: session.client_secret });
   } catch (error) {
@@ -65,7 +75,7 @@ export async function getSessionStatus(req: Request, res: Response) {
     if (!session) {
       return res.status(404).json({ message: "Session not found" });
     }
-    if (session.metadata?.userId !== id) {
+    if (session.metadata?.tenantId !== id) {
       return res.status(403).json({
         message: "Unauthorized to retrieve session status",
       });
@@ -76,4 +86,37 @@ export async function getSessionStatus(req: Request, res: Response) {
   } catch (error) {
     res.status(500).json({ message: "Failed to retrieve session status" });
   }
+}
+
+export async function handleWebhook(request: Request, response: Response) {
+  const payload = request.body;
+  const sig = request.headers["stripe-signature"];
+  const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET!;
+  if (!sig) {
+    return response.status(400).send("Missing Stripe signature");
+  }
+  let event;
+
+  try {
+    event = paymentService.constructStripeWebhookEvent(
+      payload,
+      sig,
+      endpointSecret,
+    );
+    if (
+      event.type === "checkout.session.completed" ||
+      event.type === "checkout.session.async_payment_succeeded"
+    ) {
+      await paymentService.fulfillCheckout(event.data.object.id);
+    }
+  } catch (error) {
+    if (error instanceof Stripe.errors.StripeSignatureVerificationError) {
+      console.error("Webhook signature verification failed:", error.message);
+      return response.status(400).send(`Webhook Error: ${error.message}`);
+    }
+    console.error("Error handling webhook:", error);
+    return response.status(500).send("Internal Server Error");
+  }
+
+  response.status(200).end();
 }
