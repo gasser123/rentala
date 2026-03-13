@@ -12,7 +12,7 @@ const stripePromise = loadStripe(
 
 export default function Checkout({ clientSecret }: { clientSecret: string }) {
   return (
-    <div id="checkout">
+    <div id="checkout" className="p-5 w-full">
       <EmbeddedCheckoutProvider
         stripe={stripePromise}
         options={{ clientSecret }}

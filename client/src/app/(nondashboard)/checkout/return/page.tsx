@@ -1,39 +1,45 @@
-import { fetchAuthSession } from "aws-amplify/auth";
-import { notFound } from "next/navigation";
+"use client";
+import { useGetCheckOutSessionStatusQuery } from "@/state/payments-api";
+import { Loader } from "@aws-amplify/ui-react";
+import { notFound, useSearchParams } from "next/navigation";
 
-const CheckoutReturnPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-  const { session_id } = await searchParams;
+const CheckoutReturnPage = () => {
+  const searchParmas = useSearchParams();
+  const session_id = searchParmas.get("session_id");
 
   if (!session_id) {
     notFound();
   }
-  const ApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/session-status?sessionId=${session_id}`;
-  const session = await fetchAuthSession();
-  const { idToken } = session.tokens ?? {};
-  if (!idToken) {
-    return <h2>401 Unauthorized</h2>;
-  }
-  const response = await fetch(ApiUrl, {
-    headers: {
-      Authorization: `Bearer ${idToken}`,
-    },
-    cache: "no-store",
-  });
-  const data = await response.json();
-  if (!response.ok) {
+
+  const {
+    data: checkoutSessionStatus,
+    isLoading: isCheckingSessionStatus,
+    error: checkoutSessionStatusError,
+  } = useGetCheckOutSessionStatusQuery(session_id);
+  if (checkoutSessionStatusError) {
+    console.error(
+      "Error fetching checkout session status:",
+      checkoutSessionStatusError,
+    );
     return (
       <div className="flex flex-col justify-center items-center">
-        <h2>{`${response.status} ${response.statusText}`}</h2>
-        <div>{data.message}</div>
+        <h2>Error Checking Checkout Session Status</h2>
+        <div>
+          Something went wrong while checking the checkout session status.
+        </div>
       </div>
     );
   }
 
-  const { status } = data;
+  if (isCheckingSessionStatus) {
+    return (
+      <div className="flex justify-center items-center w-full min-h-screen">
+        <Loader className="w-10! h-10!" />
+      </div>
+    );
+  }
+
+  const { status } = checkoutSessionStatus!;
   if (status === "open") {
     return <h2 className="text-center">Payment Failed</h2>;
   }

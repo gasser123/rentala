@@ -5,7 +5,10 @@ import BillingHistory from "@/components/search/residence/BillingHistory";
 import PaymentMethod from "@/components/search/residence/PaymentMethod";
 import ResidenceCard from "@/components/search/residence/ResidenceCard";
 import { useGetAuthUserQuery } from "@/state/api";
-import { useGetLeasesQuery, useGetPaymentsQuery } from "@/state/leases-api";
+import {
+  useGetPaymentsQuery,
+  useGetPropertyLeasesQuery,
+} from "@/state/leases-api";
 import { useGetPropertyQuery } from "@/state/properties-api";
 import { useParams } from "next/navigation";
 
@@ -17,20 +20,20 @@ const ResidencePage = () => {
     isLoading: propertyLoading,
     error: propertyError,
   } = useGetPropertyQuery(Number(id));
-  const { data: leases, isLoading: leasesLoading } = useGetLeasesQuery(
-    parseInt(authUser?.cognitoInfo.userId || "0"),
-    { skip: !authUser }
+  const { data: leases, isLoading: leasesLoading } = useGetPropertyLeasesQuery(
+    property?.id || 0,
+    { skip: !property || !authUser },
   );
 
   const { data: payments, isLoading: paymentsLoading } = useGetPaymentsQuery(
-    leases?.[0]?.id || 0,
-    { skip: !leases }
+    leases && leases.length > 0 ? leases[0].id : undefined,
+    { skip: !leases || leases.length === 0 },
   );
 
   if (propertyLoading || leasesLoading || paymentsLoading) return <Loading />;
   if (propertyError) return <div>Error loading property.</div>;
   const currentLease = leases?.find(
-    (lease) => lease.propertyId === property?.id
+    (lease) => lease.propertyId === property?.id,
   );
 
   return (

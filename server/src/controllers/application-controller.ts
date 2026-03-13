@@ -65,9 +65,7 @@ export const createApplication = async (req: Request, res: Response) => {
     if (!tenant) {
       return res.status(404).json({ message: "Tenant not found" });
     }
-    name = tenant.name;
-    email = tenant.email;
-    phoneNumber = tenant.phoneNumber;
+
     const newApplication = await applicationService.create(property, {
       applicationDate,
       email,

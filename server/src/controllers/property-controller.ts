@@ -91,7 +91,7 @@ export const createProperty = async (req: Request, res: Response) => {
       );
     } else {
       photoUrls = files.map((file) => {
-        const fileUrl = `http://localhost:${process.env.PORT}/uploads/${file.filename}`;
+        const fileUrl = `http://127.0.0.1:${process.env.PORT}/uploads/${file.filename}`;
         return fileUrl;
       });
     }

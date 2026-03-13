@@ -22,11 +22,8 @@ import { useParams } from "next/navigation";
 const PropertyTenantsPage = () => {
   const { id } = useParams();
   const propertyId = Number(id);
-  const {
-    data: property,
-    error: propertyError,
-    isLoading: propertyLoading,
-  } = useGetPropertyQuery(propertyId);
+  const { error: propertyError, isLoading: propertyLoading } =
+    useGetPropertyQuery(propertyId);
   const {
     data: propertyLeases,
     isLoading: leasesLoading,
@@ -36,14 +33,21 @@ const PropertyTenantsPage = () => {
     data: payments,
     isLoading: paymentsLoading,
     error: paymentsError,
-  } = useGetPaymentsQuery(propertyId);
+  } = useGetPaymentsQuery(
+    propertyLeases && propertyLeases.length > 0
+      ? propertyLeases[0].id
+      : undefined,
+    {
+      skip: !propertyLeases || propertyLeases.length === 0,
+    },
+  );
   const getCurrentMonthPaymentStatus = (leaseId: number) => {
     const currentDate = new Date();
     const currentMonthPayment = payments?.find(
       (payment) =>
         payment.leaseId === leaseId &&
         new Date(payment.dueDate).getMonth() === currentDate.getMonth() &&
-        new Date(payment.dueDate).getFullYear() === currentDate.getFullYear()
+        new Date(payment.dueDate).getFullYear() === currentDate.getFullYear(),
     );
     return currentMonthPayment?.paymentStatus || "Not Paid";
   };
@@ -89,74 +93,81 @@ const PropertyTenantsPage = () => {
           </div>
           <hr className="mt-4 mb-1" />
           <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tenant</TableHead>
-                  <TableHead>Lease Period</TableHead>
-                  <TableHead>Monthly Rent</TableHead>
-                  <TableHead>Current Month Status</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Action</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {propertyLeases?.map((lease) => (
-                  <TableRow key={lease.id} className="h-24">
-                    <TableCell>
-                      <div className="flex items-center space-x-3">
-                        <Image
-                          src="/landing-i1.png"
-                          alt={lease.tenant.name}
-                          width={40}
-                          height={40}
-                          className="rounded-full"
-                        />
-                        <div>
-                          <div className="font-semibold">
-                            {lease.tenant.name}
-                          </div>
-                          <div className="text-sm text-gray-500">
-                            {lease.tenant.email}
+            {propertyLeases && propertyLeases.length > 0 ? (
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Tenant</TableHead>
+                    <TableHead>Lease Period</TableHead>
+                    <TableHead>Monthly Rent</TableHead>
+                    <TableHead>Current Month Status</TableHead>
+                    <TableHead>Contact</TableHead>
+                    <TableHead>Action</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {propertyLeases?.map((lease) => (
+                    <TableRow key={lease.id} className="h-24">
+                      <TableCell>
+                        <div className="flex items-center space-x-3">
+                          <Image
+                            src="/landing-i1.png"
+                            alt={lease.tenant.name}
+                            width={40}
+                            height={40}
+                            className="rounded-full"
+                          />
+                          <div>
+                            <div className="font-semibold">
+                              {lease.tenant.name}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {lease.tenant.email}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <div>
-                        {new Date(lease.startDate).toLocaleDateString()} -
-                      </div>
-                      <div>{new Date(lease.endDate).toLocaleDateString()}</div>
-                    </TableCell>
-                    <TableCell>${lease.rent.toFixed(2)}</TableCell>
-                    <TableCell>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                          getCurrentMonthPaymentStatus(lease.id) === "Paid"
-                            ? "bg-green-100 text-green-800 border-green-300"
-                            : "bg-red-100 text-red-800 border-red-300"
-                        }`}
-                      >
-                        {getCurrentMonthPaymentStatus(lease.id) === "Paid" && (
-                          <Check className="w-4 h-4 inline-block mr-1" />
-                        )}
-                        {getCurrentMonthPaymentStatus(lease.id)}
-                      </span>
-                    </TableCell>
-                    <TableCell>{lease.tenant.phoneNumber}</TableCell>
-                    <TableCell>
-                      <button
-                        className={`border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex 
+                      </TableCell>
+                      <TableCell>
+                        <div>
+                          {new Date(lease.startDate).toLocaleDateString()} -
+                        </div>
+                        <div>
+                          {new Date(lease.endDate).toLocaleDateString()}
+                        </div>
+                      </TableCell>
+                      <TableCell>${lease.rent.toFixed(2)}</TableCell>
+                      <TableCell>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                            getCurrentMonthPaymentStatus(lease.id) === "Paid"
+                              ? "bg-green-100 text-green-800 border-green-300"
+                              : "bg-red-100 text-red-800 border-red-300"
+                          }`}
+                        >
+                          {getCurrentMonthPaymentStatus(lease.id) ===
+                            "Paid" && (
+                            <Check className="w-4 h-4 inline-block mr-1" />
+                          )}
+                          {getCurrentMonthPaymentStatus(lease.id)}
+                        </span>
+                      </TableCell>
+                      <TableCell>{lease.tenant.phoneNumber}</TableCell>
+                      <TableCell>
+                        <button
+                          className={`border border-gray-300 text-gray-700 py-2 px-4 rounded-md flex 
                       items-center justify-center font-semibold hover:bg-primary-700 hover:text-primary-50`}
-                      >
-                        <ArrowDownToLine className="w-4 h-4 mr-1" />
-                        Download Agreement
-                      </button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                        >
+                          <ArrowDownToLine className="w-4 h-4 mr-1" />
+                          Download Agreement
+                        </button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            ) : (
+              <div className="text-center py-4">No leases found.</div>
+            )}
           </div>
         </div>
       </div>

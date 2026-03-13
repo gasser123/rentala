@@ -22,7 +22,7 @@ const ImagePreviews = ({ images }: ImagePreviewsProps) => {
             "absolute inset-0 transition-opacity duration-500 ease-in-out",
             index === currentImageIndex
               ? "opacity-100 pointer-events-auto"
-              : "opacity-0 pointer-events-none"
+              : "opacity-0 pointer-events-none",
           )}
         >
           <Image
@@ -31,6 +31,11 @@ const ImagePreviews = ({ images }: ImagePreviewsProps) => {
             fill
             priority={index == 0}
             className="object-cover cursor-pointer transition-transform duration-500 ease-in-out"
+            unoptimized={
+              !process.env.NODE_ENV || process.env.NODE_ENV !== "production"
+                ? true
+                : undefined
+            }
           />
         </div>
       ))}

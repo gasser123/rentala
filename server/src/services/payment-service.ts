@@ -121,7 +121,9 @@ export class PaymentService {
             leaseId: lease.id,
             paymentDate: new Date(),
             currency: checkoutSession.currency || "usd",
-            amountPaid: checkoutSession.amount_total ?? 0,
+            amountPaid: checkoutSession.amount_total
+              ? checkoutSession.amount_total / 100
+              : 0,
             paymentStatus: "Succeeded",
           },
         });

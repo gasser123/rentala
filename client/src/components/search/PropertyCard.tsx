@@ -12,7 +12,7 @@ const PropertyCard = ({
   showFavoriteButton = true,
 }: CardProps) => {
   const [imgSrc, setImgSrc] = useState(
-    property.photoUrls?.[0] || "/placeholder.jpg"
+    property.photoUrls?.[0] || "/placeholder.jpg",
   );
 
   return (
@@ -26,6 +26,11 @@ const PropertyCard = ({
             className="object-cover"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => setImgSrc("/placeholder.jpg")}
+            unoptimized={
+              !process.env.NODE_ENV || process.env.NODE_ENV !== "production"
+                ? true
+                : undefined
+            }
           />
         </div>
         <div className="absolute bottom-4 left-4 flex gap-2">

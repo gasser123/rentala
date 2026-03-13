@@ -109,6 +109,8 @@ export async function handleWebhook(request: Request, response: Response) {
     ) {
       await paymentService.fulfillCheckout(event.data.object.id);
     }
+
+    response.status(200).end();
   } catch (error) {
     if (error instanceof Stripe.errors.StripeSignatureVerificationError) {
       console.error("Webhook signature verification failed:", error.message);
@@ -117,6 +119,4 @@ export async function handleWebhook(request: Request, response: Response) {
     console.error("Error handling webhook:", error);
     return response.status(500).send("Internal Server Error");
   }
-
-  response.status(200).end();
 }

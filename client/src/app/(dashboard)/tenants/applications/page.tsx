@@ -6,6 +6,7 @@ import Loading from "@/components/Loading";
 import { useGetAuthUserQuery } from "@/state/api";
 import { useGetApplicationsQuery } from "@/state/applications-api";
 import { CircleCheckBig, Clock, Download, XCircle } from "lucide-react";
+import Link from "next/link";
 
 const ApplicationsPage = () => {
   const { data: authUser } = useGetAuthUserQuery();
@@ -47,8 +48,19 @@ const ApplicationsPage = () => {
                 {application.status === "Approved" ? (
                   <div className="bg-green-100 p-4 text-green-700 grow flex items-center">
                     <CircleCheckBig className="w-5 h-5 mr-2" />
-                    The property is being rented by you until{" "}
-                    {new Date(application.lease?.endDate).toLocaleDateString()}
+                    {application.lease ? (
+                      `The property is being rented by you until ${new Date(application.lease?.endDate).toLocaleDateString()}`
+                    ) : (
+                      <div>
+                        Your application is approved.{" "}
+                        <Link
+                          href={`/checkout?applicationId=${application.id}`}
+                          className="text-blue-500 underline ml-1"
+                        >
+                          Proceed to Checkout
+                        </Link>
+                      </div>
+                    )}
                   </div>
                 ) : application.status === "Pending" ? (
                   <div className="bg-yellow-100 p-4 text-yellow-700 grow flex items-center">

@@ -177,6 +177,9 @@ export class PropertyService {
           leases: {
             where:
               userRole === "tenant" ? { tenantCognitoId: userId } : undefined,
+            orderBy: {
+              startDate: "desc",
+            },
             include: {
               tenant: true,
             },

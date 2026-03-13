@@ -33,6 +33,11 @@ export class ApplicationService {
             },
           },
           tenant: true,
+          lease: {
+            include: {
+              payments: true,
+            },
+          },
         },
       });
 
@@ -71,7 +76,9 @@ export class ApplicationService {
       pricePerMonth: number;
       securityDeposit: number;
     },
-    createApplicationInput: CreateApplicationInput,
+    createApplicationInput: CreateApplicationInput & {
+      tenantCognitoId: string;
+    },
   ) {
     try {
       const {

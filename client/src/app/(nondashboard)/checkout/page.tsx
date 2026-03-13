@@ -1,41 +1,53 @@
+"use client";
 import Checkout from "@/components/checkout/Checkout";
-import { fetchAuthSession } from "aws-amplify/auth";
-import { notFound } from "next/navigation";
+import { useCreateCheckOutSessionMutation } from "@/state/payments-api";
+import { Loader } from "@aws-amplify/ui-react";
+import { notFound, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
-const CheckoutPage = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) => {
-  const { applicationId } = await searchParams;
+const CheckoutPage = () => {
+  const searchParams = useSearchParams();
+  const applicationId = searchParams.get("applicationId");
   if (!applicationId) {
     notFound();
   }
-  const ApiUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/payments/create-checkout-session?applicationId=${applicationId}`;
-  const session = await fetchAuthSession();
-  const { idToken } = session.tokens ?? {};
-  if (!idToken) {
-    return <div>401 Unauthorized</div>;
-  }
-  const response = await fetch(ApiUrl, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${idToken}`,
+  const [
+    createCheckoutSession,
+    {
+      data: checkoutSessionData,
+      isLoading: isCreatingCheckoutSession,
+      error: createCheckoutSessionError,
     },
-    cache: "no-store",
-  });
-  const data = await response.json();
-  if (!response.ok) {
+  ] = useCreateCheckOutSessionMutation();
+
+  useEffect(() => {
+    const initiateCheckout = async () => {
+      await createCheckoutSession(Number(applicationId));
+    };
+    initiateCheckout();
+  }, [createCheckoutSession, applicationId]);
+  if (createCheckoutSessionError) {
+    console.error(
+      "Error creating checkout session:",
+      createCheckoutSessionError,
+    );
     return (
       <div className="flex flex-col justify-center items-center">
-        <h2>{`${response.status} ${response.statusText}`}</h2>
-        <div>{data.message}</div>
+        <h2>Error Creating Checkout Session</h2>
+        <div>Something went wrong while creating the checkout session.</div>
       </div>
     );
   }
 
-  return <Checkout clientSecret={data.clientSecret} />;
+  if (isCreatingCheckoutSession || !checkoutSessionData) {
+    return (
+      <div className="flex justify-center items-center w-full min-h-screen">
+        <Loader className="w-10! h-10!" />
+      </div>
+    );
+  }
+
+  return <Checkout clientSecret={checkoutSessionData.clientSecret} />;
 };
 
 export default CheckoutPage;

@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog";
 import { Form } from "../ui/form";
 import { CustomFormField } from "../FormField";
 import { Button } from "../ui/button";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 const ApplicationModal = ({
   isOpen,
   onClose,
@@ -18,7 +18,6 @@ const ApplicationModal = ({
     useCreateApplicationMutation();
   const { data: authUser } = useGetAuthUserQuery();
   const form = useForm<ApplicationFormData>({
-    // @ts-expect-error incompatible types between zod schema and the resolver
     resolver: zodResolver(applicationSchema),
     defaultValues: {
       name: "",
@@ -34,6 +33,7 @@ const ApplicationModal = ({
     }
     await createApplication({
       ...data,
+      message: data.message?.trim() === "" ? undefined : data.message,
       applicationDate: new Date().toISOString(),
       status: "Pending",
       propertyId,
@@ -72,8 +72,14 @@ const ApplicationModal = ({
               type="textarea"
               placeholder="Enter any additional information"
             />
-            <Button type="submit" className="bg-gray-700 text-white w-full">
-              Submit Application
+            <Button
+              type="submit"
+              className="bg-gray-700 text-white w-full cursor-pointer"
+              disabled={createApplicationLoading}
+            >
+              {createApplicationLoading
+                ? "Submitting..."
+                : "Submit Application"}
             </Button>
           </form>
         </Form>

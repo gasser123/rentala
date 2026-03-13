@@ -35,6 +35,11 @@ const ApplicationCard = ({
             className="rounded-xl object-cover w-full lg:w-[200px] h-[150px]"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             onError={() => setImgSrc("/placeholder.jpg")}
+            unoptimized={
+              !process.env.NODE_ENV || process.env.NODE_ENV !== "production"
+                ? true
+                : undefined
+            }
           />
           <div className="flex flex-col justify-between">
             <div>
@@ -71,15 +76,23 @@ const ApplicationCard = ({
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Start Date:</span>{" "}
-            {new Date(application.lease?.startDate).toLocaleDateString()}
+            {application.lease
+              ? new Date(application.lease?.startDate).toLocaleDateString()
+              : "N/A"}
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">End Date:</span>{" "}
-            {new Date(application.lease?.endDate).toLocaleDateString()}
+            {application.lease
+              ? new Date(application.lease?.endDate).toLocaleDateString()
+              : "N/A"}
           </div>
           <div className="flex justify-between">
             <span className="text-gray-500">Next Payment:</span>{" "}
-            {new Date(application.lease?.nextPaymentDate).toLocaleDateString()}
+            {application.lease
+              ? new Date(
+                  application.lease?.nextPaymentDate,
+                ).toLocaleDateString() || "N/A"
+              : "N/A"}
           </div>
         </div>
 
@@ -101,7 +114,7 @@ const ApplicationCard = ({
                 alt={contactPerson.name}
                 width={40}
                 height={40}
-                className="rounded-full mr-2 min-w-[40px] min-h-[40px]"
+                className="rounded-full mr-2 min-w-10 min-h-10"
               />
             </div>
             <div className="flex flex-col gap-2">

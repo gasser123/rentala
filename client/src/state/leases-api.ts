@@ -4,7 +4,7 @@ import { withToast } from "@/lib/utils";
 
 export const leasesApiSlice = api.injectEndpoints({
   endpoints: (builder) => ({
-    getLeases: builder.query<Lease[], number>({
+    getLeases: builder.query<Lease[], undefined>({
       query: () => "/leases",
       providesTags: ["Lease"],
       async onQueryStarted(_, { queryFulfilled }) {
