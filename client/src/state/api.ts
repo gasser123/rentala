@@ -28,6 +28,7 @@ export const api = createApi({
     "Lease",
     "Payment",
     "Application",
+    "Notification",
   ],
   endpoints: (build) => ({
     getAuthUser: build.query<User, void>({

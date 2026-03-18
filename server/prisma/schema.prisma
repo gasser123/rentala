@@ -102,6 +102,7 @@ model Manager {
   phoneNumber String
 
   managedProperties Property[]
+  notifications     Notification[]
 }
 
 model Tenant {
@@ -115,6 +116,7 @@ model Tenant {
   favorites    Property[]    @relation("TenantFavorites")
   applications Application[]
   leases       Lease[]
+  notifications Notification[]
 }
 
 model Location {
@@ -170,4 +172,24 @@ model Payment {
   leaseId       Int
   lease Lease   @relation(fields: [leaseId], references: [id])
   createdAt     DateTime @default(now())
+}
+
+model Notification {
+  id        Int   @id @default(autoincrement()) 
+  title     String
+  message   String
+  type      NotificationType
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  tenantCognitoId  String?
+  managerCognitoId String?
+
+  tenant    Tenant?  @relation(fields: [tenantCognitoId], references: [cognitoId])
+  manager   Manager? @relation(fields: [managerCognitoId], references: [cognitoId])
+}
+
+enum NotificationType {
+  APPLICATION
+  PAYMENT
+  LEASE
 }

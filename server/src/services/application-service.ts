@@ -111,7 +111,11 @@ export class ApplicationService {
           },
         },
         include: {
-          property: true,
+          property: {
+            include: {
+              location: true,
+            },
+          },
           tenant: true,
           lease: true,
         },
@@ -161,7 +165,11 @@ export class ApplicationService {
             status,
           },
           include: {
-            property: true,
+            property: {
+              include: {
+                location: true,
+              },
+            },
             tenant: true,
             lease: true,
           },
@@ -176,7 +184,11 @@ export class ApplicationService {
             status,
           },
           include: {
-            property: true,
+            property: {
+              include: {
+                location: true,
+              },
+            },
             tenant: true,
             lease: true,
           },

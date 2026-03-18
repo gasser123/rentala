@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import Stripe from "stripe";
+import { property } from "zod";
 export class PaymentService {
   stripe: Stripe;
   constructor(private prisma: PrismaClient) {
@@ -93,10 +94,16 @@ export class PaymentService {
         );
       }
       const applicationId = checkoutSession.metadata.applicationId;
-      await this.prisma.$transaction(async (tx) => {
+      const result = await this.prisma.$transaction(async (tx) => {
         const application = await tx.application.findUnique({
           where: { id: Number(applicationId) },
-          include: { property: true },
+          include: {
+            property: {
+              include: {
+                location: true,
+              },
+            },
+          },
         });
 
         if (!application) {
@@ -141,7 +148,14 @@ export class PaymentService {
             },
           },
         });
+
+        return {
+          property: application.property,
+          tenantCognitoId: checkoutSession.metadata?.tenantId,
+        };
       });
+
+      return result;
     } catch (error) {
       console.error("Error fulfilling checkout session:", error);
       throw error;

@@ -5,6 +5,7 @@ import { LeaseService } from "../services/lease-service";
 import { PropertyService } from "../services/property-service";
 import { LocationService } from "../services/location-service";
 import { TenantService } from "../services/tenant-service";
+import { NotificationService } from "../services/notification-service";
 
 const propertyService = new PropertyService(
   prisma,
@@ -17,6 +18,7 @@ const applicationService = new ApplicationService(
   propertyService,
 );
 
+const notificationService = new NotificationService(prisma);
 const tenantService = new TenantService(prisma);
 export const getapplications = async (req: Request, res: Response) => {
   try {
@@ -78,6 +80,15 @@ export const createApplication = async (req: Request, res: Response) => {
     });
 
     res.status(201).json(newApplication);
+    notificationService
+      .createNotification({
+        title: `Application Received for ${newApplication.property.name}`,
+        message: `A new application has been received for ${newApplication.property.name} at ${newApplication.property.location.address}, ${newApplication.property.location.city}.`,
+        tenantCognitoId: null,
+        managerCognitoId: newApplication.property.managerCognitoId,
+        type: "APPLICATION",
+      })
+      .catch(console.error);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -103,6 +114,15 @@ export const updateApplicationStatus = async (req: Request, res: Response) => {
       status,
     );
     res.json(updatedApplication);
+    notificationService
+      .createNotification({
+        title: `Application Status Updated for ${updatedApplication.property.name}`,
+        message: `Your application for ${updatedApplication.property.name} at ${updatedApplication.property.location.address}, ${updatedApplication.property.location.city}.`,
+        tenantCognitoId: updatedApplication.tenant.cognitoId,
+        managerCognitoId: null,
+        type: "APPLICATION",
+      })
+      .catch(console.error);
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }

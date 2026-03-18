@@ -5,6 +5,7 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { Provider } from "react-redux";
 import globalReducer from "@/state";
 import { api } from "@/state/api";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 /* REDUX STORE */
 const rootReducer = combineReducers({
@@ -17,6 +18,8 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(api.middleware),
 });
+
+setupListeners(store.dispatch);
 
 /* REDUX TYPES */
 export type RootState = ReturnType<typeof store.getState>;

@@ -6,6 +6,7 @@ import { LocationService } from "../services/location-service";
 import { LeaseService } from "../services/lease-service";
 import { PropertyService } from "../services/property-service";
 import Stripe from "stripe";
+import { NotificationService } from "../services/notification-service";
 const paymentService = new PaymentService(prisma);
 const propertyService = new PropertyService(
   prisma,
@@ -17,6 +18,9 @@ const applicationService = new ApplicationService(
   new LeaseService(prisma),
   propertyService,
 );
+
+const notificationService = new NotificationService(prisma);
+
 export const createCheckoutSession = async (req: Request, res: Response) => {
   try {
     const { applicationId } = req.query;
@@ -103,14 +107,56 @@ export async function handleWebhook(request: Request, response: Response) {
       sig,
       endpointSecret,
     );
+    let notificationInfo;
     if (
       event.type === "checkout.session.completed" ||
       event.type === "checkout.session.async_payment_succeeded"
     ) {
-      await paymentService.fulfillCheckout(event.data.object.id);
+      const result = await paymentService.fulfillCheckout(event.data.object.id);
+      notificationInfo = {
+        property: result?.property,
+        tenantCognitoId: result?.tenantCognitoId,
+      };
     }
 
     response.status(200).end();
+    if (notificationInfo) {
+      const { property, tenantCognitoId } = notificationInfo;
+
+      Promise.all([
+        notificationService.createNotification({
+          title: "Payment Successful",
+          message: ` Payment received for ${property?.name} at ${property?.location.address} ${property?.location.city}.`,
+          tenantCognitoId: tenantCognitoId!,
+          managerCognitoId: null,
+          type: "PAYMENT",
+        }),
+
+        notificationService.createNotification({
+          title: "Payment Successful",
+          message: ` Payment received for ${property?.name} at ${property?.location.address} ${property?.location.city}.`,
+          tenantCognitoId: null,
+          managerCognitoId: property?.managerCognitoId!,
+          type: "PAYMENT",
+        }),
+
+        notificationService.createNotification({
+          title: "Lease Created",
+          message: ` Lease created for ${property?.name} at ${property?.location.address} ${property?.location.city}.`,
+          tenantCognitoId: null,
+          managerCognitoId: property?.managerCognitoId!,
+          type: "LEASE",
+        }),
+
+        notificationService.createNotification({
+          title: "Lease Created",
+          message: ` Lease created for ${property?.name} at ${property?.location.address} ${property?.location.city}.`,
+          tenantCognitoId: tenantCognitoId!,
+          managerCognitoId: null,
+          type: "LEASE",
+        }),
+      ]).catch(console.error);
+    }
   } catch (error) {
     if (error instanceof Stripe.errors.StripeSignatureVerificationError) {
       console.error("Webhook signature verification failed:", error.message);

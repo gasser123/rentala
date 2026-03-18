@@ -12,6 +12,7 @@ import { applicationRoutes } from "./routes/application-routes";
 import { paymentRoutes } from "./routes/payment-routes";
 import path from "node:path";
 import { handleWebhook } from "./controllers/payment-controller";
+import { notificationsRoutes } from "./routes/notification-routes";
 
 /* Configurations */
 dotenv.config();
@@ -37,6 +38,7 @@ app.use("/managers", authMiddleware(["manager"]), managerRoutes);
 app.use("/leases", leaseRoutes);
 app.use("/applications", applicationRoutes);
 app.use("/payments", paymentRoutes);
+app.use("/notifications", notificationsRoutes);
 /* Server */
 const PORT = Number(process.env.PORT) || 8080;
 app.listen(PORT, "0.0.0.0", () => {

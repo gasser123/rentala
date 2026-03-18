@@ -10,11 +10,13 @@ import { Loader } from "@aws-amplify/ui-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { PropertyTypeEnum, AmenityEnum, HighlightEnum } from "@/lib/constants";
+import { useRouter } from "next/navigation";
 
 const AddNewPropertyPage = () => {
   const [createProperty, { isLoading: isSubmitting }] =
     useCreatePropertyMutation();
   const { data: authUser } = useGetAuthUserQuery();
+  const router = useRouter();
   const form = useForm<PropertyFormData>({
     // @ts-expect-error incompatible types between zod schema and the resolver
     resolver: zodResolver(propertySchema),
@@ -59,6 +61,7 @@ const AddNewPropertyPage = () => {
 
     formData.append("managerCognitoId", authUser.cognitoInfo.userId);
     await createProperty(formData);
+    router.push("/managers/properties");
   };
 
   return (

@@ -27,6 +27,7 @@ services:
       - ./server/.env
     volumes:
       - /app/uploads
+      - /app/prisma/migrations
     develop:
       watch:
         - action: sync
